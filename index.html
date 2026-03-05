@@ -2,291 +2,319 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Littlefield Operations</title>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Littlefield Operations — Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+:root {
+  --navy:#1c3461; --navy2:#1f3d72; --navy3:#162d58;
+  --purple:#7b2fbe; --purple2:#9040e0;
+  --green:#2d7d3a; --red:#c0392b; --amber:#b06012;
+  --teal:#178070;
+  --bg:#c8cdd8; --lab:#dde1e8; --lab-b:#b0b8c5;
+  --white:#fff;
+  --gold:#d4a017; --gold-light:#fff8e0;
+  --ok:#27ae60; --warn:#e67e22; --crit:#c0392b;
+  --inp:#c0cce0; --inp-b:#8898b8;
+  --font:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Source Sans 3',Arial,sans-serif;background:#c8cdd8;height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);font-size:13px;color:#1a1a2e;display:flex;flex-direction:column}
 
-/* ═══ TOP BAR ═══ */
-.topbar{background:#1c3461;display:flex;align-items:center;gap:6px;padding:5px 10px;height:68px;flex-shrink:0;border-bottom:2px solid #0e1e3a}
-.brand{display:flex;align-items:center;gap:9px;min-width:160px;margin-right:4px}
-.brand-circle{background:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.brand-text .b1{font-size:16px;font-weight:700;color:#fff;letter-spacing:.5px}
-.brand-text .b2{font-size:10px;color:rgba(255,255,255,.55)}
+/* ══ TOPBAR ══ */
+.topbar{background:var(--navy);display:flex;align-items:center;gap:5px;padding:5px 10px;height:66px;flex-shrink:0;border-bottom:2px solid #0b1628}
+.brand{display:flex;align-items:center;gap:9px;min-width:155px;margin-right:2px}
+.brand-logo{background:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.brand-name{color:#fff;font-weight:700;font-size:14px;letter-spacing:.3px;line-height:1.15}
+.brand-sub{color:rgba(255,255,255,.5);font-size:10px}
+.hc{background:var(--navy2);border:1px solid rgba(255,255,255,.11);border-radius:8px;padding:5px 13px;display:flex;flex-direction:column;justify-content:center}
+.hc-lbl{font-size:9px;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.hc-val{color:#fff;font-size:19px;font-weight:700;line-height:1.25}
+.hc-val input{background:transparent;border:none;outline:none;color:#fff;font:700 18px var(--font);width:100%}
+.hc-val input::placeholder{color:rgba(255,255,255,.28);font-size:13px;font-weight:400}
+.day-hc{min-width:228px}
+.day-sub{font-size:8px;color:rgba(255,255,255,.38);margin-left:4px}
+.prog-lbls{display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,.35);margin:3px 0 2px}
+.prog-track{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.prog-bar{height:100%;background:#4a9edd;border-radius:3px;transition:width .4s}
+.clock-hc{min-width:120px}
+.clock-val{font-size:14px;color:#7cc8f8;font-weight:600}
+.clock-sub{font-size:8px;color:rgba(255,255,255,.35);margin-top:1px}
+.tbtn{background:var(--navy2);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:15px;margin-left:auto;flex-shrink:0}
+.tbtn:hover{background:rgba(255,255,255,.15)}
 
-.hcard{background:#1f3d72;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;display:flex;flex-direction:column;justify-content:center;min-width:118px}
-.hcard-lbl{font-size:10px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.hcard-val{color:#fff;font-size:20px;font-weight:700;line-height:1.2}
-.hcard-val input{background:transparent;border:none;outline:none;color:#fff;font:700 20px 'Source Sans 3',sans-serif;width:100%;min-width:60px}
-.hcard-val input::placeholder{color:rgba(255,255,255,.3);font-size:14px;font-weight:400}
-
-.day-card{min-width:235px}
-.day-sub{font-size:10px;color:rgba(255,255,255,.42);margin-left:5px}
-.prog-wrap{margin-top:4px}
-.prog-lbls{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.38);margin-bottom:2px}
-.prog-track{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
-.prog-fill{height:100%;background:#4a9edd;border-radius:4px;transition:width .4s ease}
-
-.clock-card{min-width:126px}
-.clock-val{font-size:15px;color:#7cc8f8}
-.clock-sub{font-size:9px;color:rgba(255,255,255,.38);margin-top:1px}
-
-.top-btns{display:flex;gap:6px;margin-left:auto;align-items:center}
-.tbtn{background:#1f3d72;border:1px solid rgba(255,255,255,.13);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:17px}
-.tbtn:hover{background:rgba(255,255,255,.18)}
-
-/* ═══ ALERT ═══ */
-.alert-strip{display:none;background:#c0392b;color:#fff;font-weight:700;font-size:12px;text-align:center;padding:6px;flex-shrink:0;animation:ablink 1.1s infinite}
+/* ══ ALERT ══ */
+.alert-bar{display:none;background:var(--crit);color:#fff;font-weight:700;font-size:12px;text-align:center;padding:7px 12px;flex-shrink:0;animation:ablink 1.1s infinite;letter-spacing:.3px}
 @keyframes ablink{0%,100%{background:#c0392b}50%{background:#e74c3c}}
-.alert-strip.show{display:block}
+.alert-bar.on{display:block}
 
-/* ═══ BODY ═══ */
-.body-wrap{display:flex;flex:1;overflow:hidden}
+/* ══ LAYOUT ══ */
+.body{display:flex;flex:1;overflow:hidden}
 
-/* ═══ SIDEBAR ═══ */
-.sidebar{width:192px;min-width:192px;background:#1c3461;border-right:1px solid #0d1c38;display:flex;flex-direction:column;overflow-y:auto}
-.sb-user{padding:10px 13px 11px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
-.sb-avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.sb-info .sb-welcome{font-size:9px;color:rgba(255,255,255,.45)}
-.sb-info .sb-name{font-size:11px;color:#6fb3f8;font-weight:600;cursor:pointer}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 13px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;border-left:3px solid transparent;transition:all .12s;user-select:none;text-decoration:none}
-.nav-item:hover{background:rgba(255,255,255,.07)}
-.nav-item.active{background:rgba(255,255,255,.11);border-left-color:#4a9edd}
-.nav-item.help-item{background:rgba(100,170,255,.1)}
-.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+/* ══ SIDEBAR ══ */
+.sidebar{width:190px;min-width:190px;background:var(--navy);border-right:1px solid #0b1628;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sb-user{padding:9px 12px 10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:7px}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sb-welcome{font-size:9px;color:rgba(255,255,255,.42)}
+.sb-uname{font-size:11px;color:#6fb3f8;font-weight:600}
+.nav{display:flex;flex-direction:column;padding:4px 0;flex:1}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;border-left:3px solid transparent;transition:all .12s;user-select:none}
+.ni:hover{background:rgba(255,255,255,.06)}
+.ni.on{background:rgba(255,255,255,.1);border-left-color:#4a9edd}
+.ni.hi{background:rgba(100,170,255,.09)}
+.ni-ico{font-size:13px;width:17px;text-align:center;flex-shrink:0}
 
-/* ═══ MAIN AREA ═══ */
+/* ══ MAIN ══ */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-/* ═══ TABS ═══ */
-.tabs{display:flex;background:#1c3461;border-bottom:2px solid #0d1c38;flex-shrink:0;padding:0 10px}
-.tab{padding:9px 16px;color:rgba(255,255,255,.5);font-size:11px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;text-transform:uppercase;letter-spacing:.5px;transition:all .12s;user-select:none}
+/* ══ TABS ══ */
+.tabs{display:flex;background:var(--navy);border-bottom:2px solid #0b1628;flex-shrink:0;padding:0 8px}
+.tab{padding:8px 15px;color:rgba(255,255,255,.48);font-size:11px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;text-transform:uppercase;letter-spacing:.4px;transition:all .12s;user-select:none;white-space:nowrap}
 .tab:hover{color:#fff}
-.tab.active{color:#fff;border-bottom-color:#4a9edd}
+.tab.on{color:#fff;border-bottom-color:#4a9edd}
 
-/* ═══ VIEWS ═══ */
+/* ══ VIEWS ══ */
 .view{display:none;flex:1;overflow:hidden}
 .view.on{display:flex}
 
-/* ════════════════════════════════════
-   VIEW 1 — DASHBOARD (sim clone)
-════════════════════════════════════ */
-.dash-view{flex:1;display:flex;gap:8px;padding:9px;overflow:auto}
-.dash-left{display:flex;flex-direction:column;gap:7px;width:172px;min-width:172px}
-.dash-center{flex:1;display:flex;flex-direction:column;gap:7px;min-width:320px}
-.dash-right{display:flex;flex-direction:column;gap:7px;width:170px;min-width:170px}
+/* ══════════════════════════════════════
+   VIEW 1 — DASHBOARD
+══════════════════════════════════════ */
+.dash{display:flex;gap:8px;padding:8px;overflow:auto;flex:1;align-items:flex-start}
+.col-l{display:flex;flex-direction:column;gap:7px;width:168px;min-width:168px}
+.col-c{flex:1;display:flex;flex-direction:column;gap:6px;min-width:300px}
+.col-r{display:flex;flex-direction:column;gap:7px;width:172px;min-width:172px}
 
-/* ═══ SIM PANEL (purple card) ═══ */
-.sp{background:#fff;border:2px solid #9040e0;border-radius:9px;overflow:hidden}
-.sp-hdr{background:#7b2fbe;color:#fff;font-weight:700;font-size:12px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
-.sp-hdr-left{display:flex;align-items:center;gap:0}
-.sp-num{background:#1c3461;color:#fff;border-radius:3px;width:19px;height:19px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0}
-.sp-ext{font-size:10px;opacity:.65;cursor:pointer;padding:1px 3px}
-.sp-body{padding:9px 10px}
-.sp-nav{display:flex;align-items:center;gap:4px;padding:4px 8px 5px;font-size:9px;color:#999}
-.sdots{display:flex;gap:3px}.sdot{width:6px;height:6px;border-radius:50%;background:#ccc}.sdot.on{background:#1c3461}
+/* sim card */
+.sc{background:#fff;border:2px solid var(--purple2);border-radius:9px;overflow:hidden}
+.sc-h{background:var(--purple);color:#fff;font-weight:700;font-size:12px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
+.sc-num{background:var(--navy);color:#fff;border-radius:3px;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0}
+.sc-ext{font-size:10px;opacity:.6;cursor:pointer}
+.sc-b{padding:9px 10px}
+.sc-nav{display:flex;align-items:center;gap:4px;padding:3px 8px 5px;font-size:9px;color:#999}
+.dots{display:flex;gap:3px}
+.dot{width:6px;height:6px;border-radius:50%;background:#ccc}
+.dot.on{background:var(--navy)}
 
 /* material */
-.flask-icon{font-size:30px;text-align:center;padding:5px 0 3px}
-.mat-row{display:flex;align-items:center;gap:5px;margin:3px 0;font-size:11px}
-.mat-label{font-weight:600;color:#555;width:52px;text-align:right}
-.mat-inp{background:#c0cce0;border:1px solid #8898b8;border-radius:3px;padding:2px 5px;width:50px;font-size:12px;font-weight:700;text-align:right;color:#1c3461;outline:none;font-family:inherit}
-.mat-inp:focus{outline:2px solid #4a9edd;background:#d5e3f8}
-.mat-unit{font-size:10px;color:#666}
-.mat-warn{font-size:9px;color:#9a4e00;background:#fffaee;border:1px solid #f0c870;border-radius:3px;padding:3px 5px;margin-top:5px;line-height:1.35}
-.mat-info{font-size:9px;color:#555;margin-top:5px;line-height:1.5}
+.flask{font-size:28px;text-align:center;padding:4px 0 3px}
+.mr{display:flex;align-items:center;gap:5px;margin:3px 0;font-size:11px}
+.ml{font-weight:600;color:#555;width:50px;text-align:right}
+.mi{background:var(--inp);border:1px solid var(--inp-b);border-radius:3px;padding:2px 5px;width:48px;font-size:12px;font-weight:700;text-align:right;color:var(--navy);outline:none;font-family:var(--font)}
+.mi:focus{outline:2px solid #4a9edd;background:#d5e3f8}
+.mu{font-size:10px;color:#666}
+.mwarn{font-size:9px;color:#9a4e00;background:#fffaee;border:1px solid #f0c870;border-radius:3px;padding:3px 5px;margin-top:4px;line-height:1.35}
+.minfo{font-size:9px;color:#555;margin-top:4px;line-height:1.6}
 
 /* orders */
-.csel{width:100%;background:#c0cce0;border:1px solid #8898b8;border-radius:3px;padding:3px 5px;font-size:11px;font-family:inherit;font-weight:700;color:#1c3461;outline:none;cursor:pointer}
+.csel{width:100%;background:var(--inp);border:1px solid var(--inp-b);border-radius:3px;padding:3px 5px;font-size:11px;font-family:var(--font);font-weight:700;color:var(--navy);outline:none;cursor:pointer}
 .csel:focus{outline:2px solid #4a9edd}
-.csel-detail{font-size:9px;color:#555;margin-top:3px;line-height:1.4}
-.rev-pills{display:flex;gap:3px;margin-top:5px}
-.rpill{flex:1;border-radius:4px;border:1px solid #ddd;background:#f5f5f5;text-align:center;padding:3px 2px;font-size:9px;font-weight:700;transition:all .25s}
-.rpill.best{background:#e8f8ee;border-color:#2ecc71;color:#155724}
-.rpill .rp-price{display:block;font-size:12px}
-.rpill .rp-lbl{font-size:8px;color:#888;font-weight:400}
+.cdet{font-size:9px;color:#555;margin-top:3px;line-height:1.4}
+.rpills{display:flex;gap:3px;margin-top:5px}
+.rp{flex:1;border-radius:4px;border:1px solid #ddd;background:#f5f5f5;text-align:center;padding:3px 2px;font-size:9px;font-weight:700;transition:all .2s}
+.rp.best{background:#e8f8ee;border-color:#2ecc71;color:#155724}
+.rp-v{display:block;font-size:12px}
+.rp-l{font-size:8px;color:#888;font-weight:400}
 
-/* decision box */
-.dec-box{border-radius:7px;padding:8px 10px;border:2px solid #c8a000;background:#fffde8;transition:all .3s;font-size:11px}
-.dec-box.ok{border-color:#27ae60;background:#edfaf2}
-.dec-box.warn{border-color:#e67e22;background:#fff8ee}
-.dec-box.crit{border-color:#c0392b;background:#ffeaea;animation:crit-pulse 1.4s infinite}
-@keyframes crit-pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.2)}50%{box-shadow:0 0 0 7px rgba(192,57,43,.05)}}
-.dec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;color:#6a5000}
-.dec-box.ok .dec-title{color:#145220}
-.dec-box.warn .dec-title{color:#7a3c00}
-.dec-box.crit .dec-title{color:#720000}
-.dec-body{line-height:1.45;color:#222}
+/* ══ COMMAND BOX — the star of the show ══ */
+.cmd-box{border-radius:9px;padding:10px 12px;border:2px solid var(--gold);background:var(--gold-light);transition:all .3s;position:relative;overflow:hidden}
+.cmd-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transition:background .3s}
+.cmd-box.ok{border-color:var(--ok);background:#edfaf2}.cmd-box.ok::before{background:var(--ok)}
+.cmd-box.warn{border-color:var(--warn);background:#fff8ee}.cmd-box.warn::before{background:var(--warn)}
+.cmd-box.crit{border-color:var(--crit);background:#ffeaea;animation:cpulse 1.4s infinite}.cmd-box.crit::before{background:var(--crit)}
+@keyframes cpulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.2)}50%{box-shadow:0 0 0 8px rgba(192,57,43,.05)}}
+.cmd-who{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#aaa;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.cmd-role{background:var(--navy);color:#fff;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;letter-spacing:.3px}
+.cmd-box.ok .cmd-role{background:var(--ok)}
+.cmd-box.warn .cmd-role{background:var(--warn)}
+.cmd-box.crit .cmd-role{background:var(--crit)}
+.cmd-title{font-size:12px;font-weight:700;color:#6a5000;margin-bottom:5px;line-height:1.3}
+.cmd-box.ok .cmd-title{color:#145220}
+.cmd-box.warn .cmd-title{color:#7a3c00}
+.cmd-box.crit .cmd-title{color:#720000}
+.cmd-steps{display:flex;flex-direction:column;gap:4px}
+.cmd-step{display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.4;color:#222}
+.cmd-step-n{background:var(--navy);color:#fff;border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px}
+.cmd-box.ok .cmd-step-n{background:var(--ok)}
+.cmd-box.warn .cmd-step-n{background:var(--warn)}
+.cmd-box.crit .cmd-step-n{background:var(--crit)}
 
-/* center — job release */
+/* job release */
 .jrel-row{display:flex;align-items:center;gap:7px;padding:0 4px 2px}
-.start-lbl{font-size:10px;font-weight:700;color:#2d7d3a}
-.jrel-btn{background:#178070;color:#fff;font-weight:700;font-size:11px;border-radius:7px;padding:8px 10px;text-align:center;cursor:pointer;border:none;width:68px;line-height:1.3;font-family:inherit;transition:background .15s}
-.jrel-btn:hover{background:#126058}
+.start-lbl{font-size:10px;font-weight:700;color:var(--green)}
+.jrel{background:var(--teal);color:#fff;font-weight:700;font-size:11px;border-radius:7px;padding:7px 9px;text-align:center;border:none;width:64px;line-height:1.3;cursor:pointer;font-family:var(--font)}
+.jrel:hover{background:#126058}
 
-/* laboratory */
-.lab{background:#dde1e8;border:1.5px solid #b0b8c5;border-radius:8px;padding:8px;flex:1;display:flex;flex-direction:column}
-.lab-title{text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#3a4455;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid #b0b8c5}
+/* lab */
+.lab{background:var(--lab);border:1.5px solid var(--lab-b);border-radius:8px;padding:8px;flex:1;display:flex;flex-direction:column}
+.lab-title{text-align:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:#3a4455;padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid var(--lab-b)}
 
 /* station */
-.station{border-radius:7px;overflow:hidden;border:2px solid rgba(0,0,0,.12);margin-bottom:4px}
-.station:last-child{margin-bottom:0}
-.st-head{color:#fff;font-weight:700;font-size:12px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
-.st-name{font-size:12px;font-weight:700}
-.st-sub{font-size:9px;font-weight:400;opacity:.82;margin-top:1px}
-.st-ext{font-size:10px;opacity:.6;cursor:pointer}
-.s1 .st-head{background:#2d7d3a}
-.s2 .st-head{background:#c0392b}
-.s3 .st-head{background:#b06012}
-.st-body{background:#fff;padding:7px;display:flex;gap:7px;align-items:center}
+.stn{border-radius:7px;overflow:hidden;border:2px solid rgba(0,0,0,.11);margin-bottom:4px}
+.stn:last-child{margin-bottom:0}
+.stn-h{color:#fff;font-weight:700;font-size:12px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
+.stn-sub{font-size:9px;font-weight:400;opacity:.8;margin-top:1px}
+.stn-ext{font-size:10px;opacity:.55;cursor:pointer}
+.s1 .stn-h{background:var(--green)}
+.s2 .stn-h{background:var(--red)}
+.s3 .stn-h{background:var(--amber)}
+.stn-b{background:#fff;padding:7px;display:flex;gap:7px;align-items:center}
 
 /* machine box */
-.mbox{background:#f2f2f2;border:1.5px solid #c5c5c5;border-radius:5px;width:66px;height:52px;display:flex;align-items:center;justify-content:center;font-size:22px;position:relative;flex-shrink:0;transition:all .35s}
+.mbox{background:#f2f2f2;border:1.5px solid #c5c5c5;border-radius:5px;width:60px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;flex-shrink:0;transition:all .3s}
 .mbox.ok{background:#eaf8ed;border-color:#5dba7a}
-.mbox.warn{background:#fff7e0;border-color:#de9e1a;animation:mwarn 1.6s infinite}
+.mbox.warn{background:#fff7e0;border-color:#de9e1a;animation:mwarn 1.5s infinite}
 .mbox.crit{background:#ffeaea;border-color:#d83030;animation:mcrit 1s infinite}
 @keyframes mwarn{0%,100%{box-shadow:0 0 0 0 rgba(222,158,26,.3)}50%{box-shadow:0 0 0 5px rgba(222,158,26,.1)}}
 @keyframes mcrit{0%,100%{box-shadow:0 0 0 0 rgba(216,48,48,.4)}50%{box-shadow:0 0 0 6px rgba(216,48,48,.12)}}
-.mbox-num{position:absolute;top:2px;right:3px;background:#ddd;border:1px solid #bbb;border-radius:2px;font-size:9px;font-weight:700;padding:0 3px;line-height:15px;color:#333}
-
-/* util bar */
-.st-ctrl{flex:1;min-width:0}
-.ul-row{display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:2px}
-.ul-val{font-weight:700}
-.ul-track{height:7px;background:#ddd;border-radius:3px;overflow:hidden}
-.ul-fill{height:100%;border-radius:3px;transition:width .5s,background .4s}
-.st-queue{font-size:9px;color:#444;margin-top:2px}
-.st-queue b{color:#c0392b}
-.mach-row{display:flex;align-items:center;gap:3px;margin-top:4px}
-.mach-row label{font-size:8px;color:#666}
-.stepper{display:flex;align-items:center;gap:2px}
-.sbtn{background:#c0cce0;border:1px solid #8898b8;border-radius:2px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:700;color:#1c3461;user-select:none;transition:background .1s}
-.sbtn:hover{background:#aabcd8}
-.snum{background:#c0cce0;border:1px solid #8898b8;border-radius:2px;width:26px;height:18px;text-align:center;font-size:11px;font-weight:700;color:#1c3461;line-height:18px}
-.scost{font-size:8px;color:#999;margin-left:2px}
-.pri-row{display:flex;gap:2px;margin-top:3px}
-.pri-btn{background:#eee;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:8px;font-weight:700;cursor:pointer;color:#444;transition:all .12s;user-select:none}
-.pri-btn:hover{background:#dce8f5}
-.pri-btn.on{background:#1c3461;color:#fff;border-color:#1c3461}
-.pri-btn.on.red{background:#c0392b;border-color:#c0392b}
-
-/* flow labels */
-.flow{display:flex;justify-content:space-between;align-items:center;padding:2px 5px;font-size:8px;color:#666}
+.mbox-n{position:absolute;top:2px;right:3px;background:#ddd;border:1px solid #bbb;border-radius:2px;font-size:9px;font-weight:700;padding:0 3px;line-height:15px;color:#333}
+.stc{flex:1;min-width:0}
+.ulr{display:flex;justify-content:space-between;font-size:9px;color:#555;margin-bottom:2px}
+.ulv{font-weight:700}
+.ult{height:7px;background:#ddd;border-radius:3px;overflow:hidden}
+.ulf{height:100%;border-radius:3px;transition:width .5s,background .4s}
+.sq{font-size:9px;color:#444;margin-top:2px}
+.sq b{color:var(--crit)}
+.stpr{display:flex;gap:2px;margin-top:3px}
+.pb{background:#eee;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:8px;font-weight:700;cursor:pointer;color:#444;transition:all .12s;user-select:none}
+.pb:hover{background:#dce8f5}
+.pb.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pb.red{background:var(--red);border-color:var(--red)}
+.mach-edit{display:flex;align-items:center;gap:3px;margin-top:3px}
+.mach-edit label{font-size:8px;color:#666}
+.step-r{display:flex;justify-content:space-between;align-items:center;padding:2px 4px;font-size:8px;color:#666}
 .step-tag{background:#e0e4ee;border:1px solid #c8cedc;border-radius:2px;padding:1px 4px;font-size:8px;font-weight:700;color:#334}
-.green-flow{font-weight:700;color:#2d7d3a;font-size:9px}
-.end-lbl{text-align:center;font-size:10px;font-weight:700;color:#2d7d3a;padding:2px 0}
+.grn-lbl{font-weight:700;color:var(--green);font-size:9px}
+.end-lbl{text-align:center;font-size:9px;font-weight:700;color:var(--green);padding:2px 0}
+.stpr-row{display:flex;align-items:center;gap:3px;margin-top:3px}
+.stpr-row label{font-size:8px;color:#666}
+.stp{display:flex;align-items:center;gap:2px}
+.sb2{background:var(--inp);border:1px solid var(--inp-b);border-radius:2px;width:17px;height:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:700;color:var(--navy);user-select:none}
+.sb2:hover{background:#aabcd8}
+.sn{background:var(--inp);border:1px solid var(--inp-b);border-radius:2px;width:24px;height:17px;text-align:center;font-size:10px;font-weight:700;color:var(--navy);line-height:17px}
+.scost{font-size:8px;color:#999;margin-left:2px}
 
-/* right side */
-.cash-hdr{background:#7b2fbe;color:#fff;font-weight:700;font-size:11px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
-.cash-body{padding:9px;text-align:center}
-.cash-ico{font-size:30px;margin:3px 0}
-.cash-inp{width:100%;border:none;outline:none;text-align:center;font-size:12px;font-weight:700;color:#1c3461;font-family:inherit;background:#c0cce0;border-radius:3px;padding:3px 5px;cursor:text}
-
-/* ——— GLOWING INPUT HIGHLIGHT ——— */
-.glow-inp{
-  border:2px solid #c8a000 !important;
-  background:#fffde8 !important;
-  animation:glow-pulse 2.8s ease-in-out infinite;
-}
-.glow-inp:focus{animation:none !important;border-color:#4a9edd !important;background:#edf3ff !important}
-.glow-inp:not(:placeholder-shown){animation:none !important;border-color:#27ae60 !important;background:#edfaf2 !important}
-@keyframes glow-pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,160,0,.18)}50%{box-shadow:0 0 0 5px rgba(200,160,0,.07)}}
+/* right panels */
+.cash-h{background:var(--purple);color:#fff;font-weight:700;font-size:11px;padding:5px 9px;display:flex;align-items:center;justify-content:space-between}
+.cash-inp{width:100%;border:none;outline:none;text-align:center;font-size:12px;font-weight:700;color:var(--navy);background:var(--inp);border-radius:3px;padding:3px 5px;font-family:var(--font)}
 
 /* metrics panel */
-.metrics-panel{background:#fff;border:2px solid #c8a000;border-radius:9px;overflow:hidden}
-.metrics-hdr{background:#c8a000;color:#1a1200;font-weight:700;font-size:11px;padding:5px 9px;display:flex;align-items:center;gap:5px}
-.m-dot{width:7px;height:7px;border-radius:50%;background:#27ae60;animation:mdot 1.6s infinite}
-@keyframes mdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
-.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:8px}
-.mg-item label{display:block;font-size:8px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
-.mg-inp{width:100%;background:#fffde8;border:2px solid #c8a000;border-radius:4px;padding:4px 6px;font-size:14px;font-weight:700;color:#7a5000;outline:none;text-align:center;font-family:inherit;transition:all .2s}
-.mg-inp::placeholder{color:rgba(160,120,0,.35);font-size:10px;font-weight:400}
-.mg-inp:focus{border-color:#4a9edd;background:#edf3ff;color:#333}
-.mg-inp:not(:placeholder-shown){border-color:#27ae60;background:#edfaf2;color:#155724}
-.mg-inp:placeholder-shown{animation:glow-pulse 2.8s ease-in-out infinite}
-.metrics-hint{font-size:9px;color:#8a6000;text-align:center;padding:0 8px 7px}
+.met-panel{background:#fff;border:2px solid var(--gold);border-radius:9px;overflow:hidden}
+.met-h{background:var(--gold);color:#1a1000;font-weight:700;font-size:11px;padding:5px 9px;display:flex;align-items:center;gap:5px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0;animation:pdot 1.5s infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+.met-g{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:8px}
+.mg-lbl{display:block;font-size:8px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.mg-i{width:100%;background:#fffde8;border:2px solid var(--gold);border-radius:4px;padding:4px 5px;font-size:13px;font-weight:700;color:#7a5000;outline:none;text-align:center;font-family:var(--font);transition:all .2s}
+.mg-i::placeholder{color:rgba(160,120,0,.32);font-size:10px;font-weight:400}
+.mg-i:focus{border-color:#4a9edd;background:#edf3ff;color:#333}
+.mg-i:not(:placeholder-shown){border-color:var(--ok);background:#edfaf2;color:#145220}
+.mg-i:placeholder-shown{animation:gpulse 2.8s ease-in-out infinite}
+@keyframes gpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.18)}50%{box-shadow:0 0 0 4px rgba(212,160,23,.07)}}
+.met-hint{font-size:9px;color:#8a6000;text-align:center;padding:0 8px 7px}
 
-/* finished orders */
-.fin-body{padding:9px;text-align:center}
-.fin-ico{font-size:34px;margin:7px 0}
+/* glow inputs */
+.glow{border:2px solid var(--gold) !important;background:var(--gold-light) !important;animation:gpulse 2.8s ease-in-out infinite}
+.glow:focus{animation:none !important;border-color:#4a9edd !important;background:#edf3ff !important}
+.glow:not(:placeholder-shown){animation:none !important;border-color:var(--ok) !important;background:#edfaf2 !important}
 
-/* ════════════════════════════════════
-   VIEW 2 — DAILY DATA
-════════════════════════════════════ */
-.data-view{flex:1;display:flex;flex-direction:column;padding:12px;gap:10px;overflow:auto}
-.data-banner{background:#fffde8;border:2px solid #c8a000;border-radius:9px;padding:12px 15px}
-.data-banner h3{font-size:13px;font-weight:700;color:#1c3461;margin-bottom:5px}
-.data-banner p{font-size:11px;color:#555;margin-bottom:8px}
-.steps-row{display:flex;gap:7px;flex-wrap:wrap}
-.step-pill{background:#1c3461;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
-.step-pill.green{background:#27ae60}
-.step-n{background:rgba(255,255,255,.22);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+/* ══════════════════════════════════════
+   VIEW 2 — ROLES
+══════════════════════════════════════ */
+.roles-view{flex:1;overflow:auto;padding:16px}
+.roles-title{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.roles-sub{font-size:12px;color:#666;margin-bottom:16px}
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.role-card{background:#fff;border-radius:10px;overflow:hidden;border:2px solid #e0e4ee;transition:transform .15s,box-shadow .15s}
+.role-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.role-hdr{padding:10px 14px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px}
+.role-ico{font-size:18px}
+.role-num{font-size:10px;opacity:.65;margin-left:auto}
+.role-body{padding:12px 14px}
+.role-name{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#aaa;margin-bottom:5px}
+.role-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.role-tasks{display:flex;flex-direction:column;gap:5px}
+.rt{display:flex;gap:7px;font-size:11px;line-height:1.45;color:#444}
+.rt-ico{flex-shrink:0;margin-top:1px;font-size:11px}
+.role-freq{margin-top:8px;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;border-radius:4px;padding:3px 8px;display:inline-block}
+.freq-cont{background:#e8f8ee;color:#155724}
+.freq-check{background:#fff3e0;color:#7a3c00}
+.freq-watch{background:#e8edf8;color:#1c3461}
+.freq-when{background:#ffeaea;color:#720000}
 
-.paste-zone{display:flex;flex-direction:column;gap:5px}
-.paste-lbl{font-size:12px;font-weight:700;color:#1c3461}
-.paste-ta{width:100%;min-height:100px;font-family:monospace;font-size:11px;border:2px dashed #c8a000;border-radius:7px;padding:9px;background:#fffde8;resize:vertical;outline:none;color:#222;line-height:1.5}
+/* ══════════════════════════════════════
+   VIEW 3 — DAILY DATA
+══════════════════════════════════════ */
+.data-view{flex:1;display:flex;flex-direction:column;padding:12px;gap:9px;overflow:auto}
+.banner{background:var(--gold-light);border:2px solid var(--gold);border-radius:9px;padding:11px 14px}
+.banner h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.banner p{font-size:11px;color:#555;margin-bottom:7px}
+.steps-row{display:flex;gap:6px;flex-wrap:wrap}
+.sp2{background:var(--navy);color:#fff;border-radius:6px;padding:4px 9px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.sp2.g{background:var(--ok)}
+.spn{background:rgba(255,255,255,.2);border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0}
+.paste-ta{width:100%;min-height:95px;font-family:var(--mono);font-size:11px;border:2px dashed var(--gold);border-radius:7px;padding:9px;background:var(--gold-light);resize:vertical;outline:none;color:#222;line-height:1.5}
 .paste-ta:focus{border-color:#4a9edd;background:#f0f7ff}
 .paste-ta::placeholder{color:#bbb}
-.btn-bar{display:flex;gap:8px;align-items:center}
-.btn{border:none;font-family:inherit;font-weight:700;font-size:11px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:background .15s}
-.btn-go{background:#27ae60;color:#fff}.btn-go:hover{background:#1e8449}
-.btn-clr{background:#7b2fbe;color:#fff}.btn-clr:hover{background:#6022a0}
-.parse-msg{font-size:11px;color:#444}
-
-.tbl-card{background:#fff;border:1px solid #ccc;border-radius:9px;overflow:hidden;flex:1;display:flex;flex-direction:column}
-.tbl-hdr{background:#1c3461;color:#fff;padding:7px 13px;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tbl-sub{font-size:10px;color:rgba(255,255,255,.5);font-weight:400;margin-left:5px}
+.btn-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:none;font-family:var(--font);font-weight:700;font-size:11px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:background .15s}
+.btn-go{background:var(--ok);color:#fff}.btn-go:hover{background:#1e8449}
+.btn-clr{background:var(--purple);color:#fff}.btn-clr:hover{background:#6022a0}
+.pmsg{font-size:11px;color:#444}
+.tbl-card{background:#fff;border:1px solid #ccc;border-radius:9px;overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column}
+.tbl-hdr2{background:var(--navy);color:#fff;padding:6px 12px;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tbl-sub{font-size:9px;color:rgba(255,255,255,.5);font-weight:400;margin-left:5px}
 .tbl-wrap{overflow:auto;flex:1}
-table.dtbl{border-collapse:collapse;width:100%;font-size:10px;white-space:nowrap}
-table.dtbl th{background:#1f3d72;color:#fff;padding:5px 7px;text-align:center;font-size:9px;font-weight:700;position:sticky;top:0;z-index:2;border-right:1px solid rgba(255,255,255,.08)}
-table.dtbl td{padding:3px 6px;text-align:center;border-bottom:1px solid #eee;border-right:1px solid #f2f2f2;font-family:monospace}
-table.dtbl tr:nth-child(even) td{background:#f9f9fb}
-table.dtbl tr.last-row td{background:#fffbd8 !important;font-weight:700}
-.red-cell{background:#ffeaea !important;color:#b83030;font-weight:700}
-.warn-cell{background:#fff5e0 !important;color:#8a5000;font-weight:700}
-.good-cell{background:#edfaf2 !important;color:#145220}
+table.dt{border-collapse:collapse;width:100%;font-size:10px;white-space:nowrap}
+table.dt th{background:var(--navy2);color:#fff;padding:4px 6px;text-align:center;font-size:9px;font-weight:700;position:sticky;top:0;z-index:2;border-right:1px solid rgba(255,255,255,.07)}
+table.dt td{padding:3px 5px;text-align:center;border-bottom:1px solid #eee;border-right:1px solid #f2f2f2;font-family:var(--mono);font-size:10px}
+table.dt tr:nth-child(even) td{background:#f9f9fb}
+table.dt tr.hi td{background:#fffbd8 !important;font-weight:700}
+.rc{background:#ffeaea !important;color:#b83030;font-weight:700}
+.wc{background:#fff5e0 !important;color:#8a5000;font-weight:700}
+.gc{background:#edfaf2 !important;color:#145220}
 
-/* ════════════════════════════════════
-   VIEW 3 — SCOREBOARD
-════════════════════════════════════ */
-.score-view{flex:1;display:flex;flex-direction:column;padding:12px;gap:10px;overflow:auto}
-.sb-banner{background:#1c3461;border-radius:9px;padding:12px 16px;display:flex;align-items:center;gap:18px;flex-shrink:0}
-.sb-banner-title{font-size:17px;font-weight:700;color:#fff}
-.sb-banner-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
-.sb-clock{background:rgba(255,255,255,.08);border-radius:6px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.7)}
-.sb-clock b{color:#7cc8f8}
-.sb-our{margin-left:auto;text-align:right}
-.sb-our-lbl{font-size:10px;color:rgba(255,255,255,.45)}
-.sb-our-val{font-size:15px;font-weight:700;color:#f5c518}
-
-.sb-card{background:#fff;border:1px solid #ccc;border-radius:9px;overflow:hidden}
-.sb-card-hdr{background:#1c3461;color:#fff;padding:7px 13px;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:space-between}
-.add-team-btn{background:#27ae60;border:none;color:#fff;font-family:inherit;font-weight:700;font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer}
-table.sbtbl{border-collapse:collapse;width:100%}
-table.sbtbl th{background:#1f3d72;color:#fff;padding:7px 12px;text-align:left;font-size:11px;font-weight:700}
-table.sbtbl td{padding:7px 12px;border-bottom:1px solid #eee;font-size:12px;vertical-align:middle}
-table.sbtbl tr:hover td{background:#f5f8ff}
-table.sbtbl tr.us-row td{background:#fffbd0;font-weight:700}
-.rank-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:5px;font-weight:700;font-size:13px;background:#1c3461;color:#fff}
-.rank-num.r1{background:#d4af37;color:#1a1000}.rank-num.r2{background:#9e9e9e}.rank-num.r3{background:#cd7f32}
-.t-inp{background:transparent;border:none;outline:none;font:inherit;width:120px;cursor:text}
-.t-inp:focus{background:#fff9d0;border-radius:3px;padding:1px 4px;outline:1px solid #c8a000}
-.cash-td-inp{background:transparent;border:none;outline:none;font:inherit;font-family:monospace;font-size:11px;font-weight:700;width:100px;cursor:text}
-.cash-td-inp:focus{background:#fff9d0;border-radius:3px;padding:1px 4px;outline:1px solid #c8a000}
-.bar-wrap{display:flex;align-items:center;gap:8px}
-.c-bar{flex:1;height:14px;background:#e5e5e5;border-radius:3px;overflow:hidden;min-width:120px}
-.c-bar-fill{height:100%;border-radius:3px;transition:width .5s}
-.c-bar-lbl{font-family:monospace;font-size:11px;font-weight:700;min-width:80px;text-align:right}
-.del-btn{background:none;border:1px solid #ddd;border-radius:3px;color:#aaa;cursor:pointer;padding:1px 6px;font-size:10px}
-.del-btn:hover{border-color:#c0392b;color:#c0392b}
-.add-form{display:none;gap:8px;padding:9px 13px;background:#f9f9fb;border-top:1px solid #eee;align-items:center;flex-wrap:wrap}
-.a-inp{border:1px solid #bbb;border-radius:4px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none}
-.a-inp:focus{border-color:#4a9edd}
-.a-sub{background:#1c3461;color:#fff;border:none;font-family:inherit;font-weight:700;font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer}
-.a-can{background:#888;color:#fff;border:none;font-family:inherit;font-weight:700;font-size:11px;padding:5px 10px;border-radius:5px;cursor:pointer}
-.notes-box{width:100%;border:1px solid #ddd;border-radius:7px;padding:8px;font-family:inherit;font-size:11px;min-height:75px;resize:vertical;outline:none}
-.notes-box:focus{border-color:#4a9edd}
+/* ══════════════════════════════════════
+   VIEW 4 — SCOREBOARD
+══════════════════════════════════════ */
+.score-view{flex:1;display:flex;flex-direction:column;padding:12px;gap:9px;overflow:auto}
+.sb-top{background:var(--navy);border-radius:9px;padding:11px 15px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0}
+.sb-h{font-size:16px;font-weight:700;color:#fff}
+.sb-meta{font-size:10px;color:rgba(255,255,255,.45)}
+.sb-clk{background:rgba(255,255,255,.08);border-radius:6px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.65)}
+.sb-clk b{color:#7cc8f8}
+.sb-us{margin-left:auto;text-align:right}
+.sb-usl{font-size:10px;color:rgba(255,255,255,.42)}
+.sb-usv{font-size:14px;font-weight:700;color:#f5c518}
+.sbc{background:#fff;border:1px solid #ccc;border-radius:9px;overflow:hidden}
+.sbc-h{background:var(--navy);color:#fff;padding:7px 12px;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:space-between}
+.add-btn{background:var(--ok);border:none;color:#fff;font-family:var(--font);font-weight:700;font-size:11px;padding:4px 11px;border-radius:5px;cursor:pointer}
+table.sbt{border-collapse:collapse;width:100%}
+table.sbt th{background:var(--navy2);color:#fff;padding:6px 11px;text-align:left;font-size:11px;font-weight:700}
+table.sbt td{padding:6px 11px;border-bottom:1px solid #eee;font-size:12px;vertical-align:middle}
+table.sbt tr:hover td{background:#f5f8ff}
+table.sbt tr.us td{background:#fffbd0;font-weight:700}
+.rb{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;font-weight:700;font-size:13px;background:var(--navy);color:#fff}
+.rb.r1{background:#d4af37;color:#1a1000}.rb.r2{background:#9e9e9e}.rb.r3{background:#cd7f32}
+.bar-w{display:flex;align-items:center;gap:7px}
+.cb{flex:1;height:13px;background:#e5e5e5;border-radius:3px;overflow:hidden;min-width:100px}
+.cbf{height:100%;border-radius:3px;transition:width .5s}
+.cbv{font-family:var(--mono);font-size:11px;font-weight:700;min-width:75px;text-align:right}
+.ti{background:transparent;border:none;outline:none;font:inherit;width:110px;cursor:text}
+.ti:focus{background:#fff9d0;border-radius:3px;padding:0 3px;outline:1px solid var(--gold)}
+.ci{background:transparent;border:none;outline:none;font:inherit;font-family:var(--mono);font-size:11px;font-weight:700;width:90px;cursor:text}
+.ci:focus{background:#fff9d0;border-radius:3px;padding:1px 4px;outline:1px solid var(--gold)}
+.del-b{background:none;border:1px solid #ddd;border-radius:3px;color:#aaa;cursor:pointer;padding:1px 6px;font-size:10px}
+.del-b:hover{border-color:var(--crit);color:var(--crit)}
+.add-form{display:none;gap:7px;padding:9px 12px;background:#f9f9fb;border-top:1px solid #eee;align-items:center;flex-wrap:wrap}
+.ai{border:1px solid #bbb;border-radius:4px;padding:4px 8px;font-size:12px;font-family:var(--font);outline:none}
+.ai:focus{border-color:#4a9edd}
+.a-go{background:var(--navy);color:#fff;border:none;font-family:var(--font);font-weight:700;font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer}
+.a-can{background:#888;color:#fff;border:none;font-family:var(--font);font-weight:700;font-size:11px;padding:5px 10px;border-radius:5px;cursor:pointer}
+.notes-ta{width:100%;border:1px solid #ddd;border-radius:7px;padding:8px;font-family:var(--font);font-size:11px;min-height:70px;resize:vertical;outline:none}
+.notes-ta:focus{border-color:#4a9edd}
 
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
@@ -297,73 +325,61 @@ input[type=number]{-moz-appearance:textfield}
 </head>
 <body>
 
-<!-- ALERT -->
-<div class="alert-strip" id="alert-strip">⚠️ CRITICAL ACTION REQUIRED — See Decision Box on Dashboard</div>
+<!-- ALERT BAR -->
+<div class="alert-bar" id="alert-bar">⚠️ CRITICAL ACTION REQUIRED — See Command Box on Dashboard</div>
 
-<!-- ══ TOP BAR ══ -->
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="brand">
-    <div class="brand-circle">🧪</div>
-    <div class="brand-text"><div class="b1">LITTLEFIELD</div><div class="b2">Operations</div></div>
+    <div class="brand-logo">🧪</div>
+    <div><div class="brand-name">LITTLEFIELD</div><div class="brand-sub">Operations</div></div>
   </div>
-
-  <div class="hcard">
-    <div class="hcard-lbl">Team Name</div>
-    <div class="hcard-val"><input id="h-team" value="falcons" placeholder="team name" oninput="onTeam()"></div>
+  <div class="hc">
+    <div class="hc-lbl">Team Name</div>
+    <div class="hc-val"><input id="h-team" value="falcons" placeholder="team" oninput="onTeam()"></div>
   </div>
-
-  <div class="hcard" style="min-width:92px">
-    <div class="hcard-lbl">Rank</div>
-    <div class="hcard-val"><input id="h-rank" placeholder="—" style="width:50px;font-size:24px"></div>
+  <div class="hc" style="min-width:86px">
+    <div class="hc-lbl">Rank</div>
+    <div class="hc-val"><input id="h-rank" placeholder="—" style="width:46px;font-size:22px"></div>
   </div>
-
-  <div class="hcard" style="min-width:160px">
-    <div class="hcard-lbl">Cash Balance</div>
-    <div class="hcard-val"><input id="h-cash" placeholder="$ —" style="width:148px" oninput="document.getElementById('cash-right').value=this.value"></div>
+  <div class="hc" style="min-width:150px">
+    <div class="hc-lbl">Cash Balance</div>
+    <div class="hc-val"><input id="h-cash" placeholder="$ —" style="width:138px" oninput="document.getElementById('cash-r').value=this.value"></div>
   </div>
-
-  <div class="hcard day-card">
-    <div class="hcard-lbl">Suspended on Day <span class="day-sub">50 → 218 → 268</span></div>
-    <div class="hcard-val"><input id="h-day" type="number" value="50" style="width:58px;font-size:22px" oninput="onDay()"></div>
-    <div class="prog-wrap">
-      <div class="prog-lbls"><span>0</span><span>50</span><span>218</span><span>268</span></div>
-      <div class="prog-track"><div class="prog-fill" id="prog" style="width:18.66%"></div></div>
-    </div>
+  <div class="hc day-hc">
+    <div class="hc-lbl">Suspended on Day <span class="day-sub">50 → 218 → 268</span></div>
+    <div class="hc-val"><input id="h-day" type="number" value="50" style="width:54px;font-size:21px" oninput="onDay()"></div>
+    <div class="prog-lbls"><span>0</span><span>50</span><span>218</span><span>268</span></div>
+    <div class="prog-track"><div class="prog-bar" id="prog" style="width:18.66%"></div></div>
   </div>
-
-  <div class="hcard clock-card">
-    <div class="hcard-lbl">Real Clock</div>
+  <div class="hc clock-hc">
+    <div class="hc-lbl">Real Clock</div>
     <div class="clock-val" id="h-clock">6:30:00 PM</div>
     <div class="clock-sub" id="h-elapsed">0m 0s elapsed</div>
   </div>
-
-  <div class="top-btns">
-    <div class="tbtn" title="Help">❓</div>
-    <div class="tbtn" title="Refresh">🔄</div>
-  </div>
+  <div class="tbtn" onclick="onDay()">🔄</div>
 </div>
 
-<!-- ══ BODY ══ -->
-<div class="body-wrap">
+<!-- BODY -->
+<div class="body">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sb-user">
-    <div class="sb-avatar">👤</div>
-    <div class="sb-info">
-      <div class="sb-welcome">Welcome</div>
-      <div class="sb-name" id="sb-name">falcons@sim...</div>
-    </div>
+    <div class="sb-av">👤</div>
+    <div><div class="sb-welcome">Welcome</div><div class="sb-uname" id="sb-uname">falcons@sim</div></div>
   </div>
-  <div style="height:6px"></div>
-  <div class="nav-item help-item" onclick="gotoView('dash')"><span class="nav-icon">❓</span>Getting Started</div>
-  <div class="nav-item help-item" onclick="gotoView('dash')"><span class="nav-icon">📋</span>Assignment Details</div>
-  <div class="nav-item" id="nav-score" onclick="gotoView('score')"><span class="nav-icon">🏆</span>Scoreboard</div>
-  <div class="nav-item" onclick="gotoView('dash')"><span class="nav-icon">📊</span>Transaction History</div>
-  <div class="nav-item" onclick="gotoView('dash')"><span class="nav-icon">💲</span>Sources And Uses Of Cash</div>
-  <div class="nav-item" id="nav-data" onclick="gotoView('data')"><span class="nav-icon">⬇</span>Consolidated Daily Data</div>
-  <div style="flex:1"></div>
-  <div class="nav-item"><span class="nav-icon">🚪</span>Logout</div>
+  <div class="nav">
+    <div class="ni hi on" onclick="gv('dash')"><span class="ni-ico">🏠</span>Dashboard</div>
+    <div class="ni hi" onclick="gv('dash')"><span class="ni-ico">📋</span>Assignment Details</div>
+    <div class="ni" onclick="gv('score')"><span class="ni-ico">🏆</span>Scoreboard</div>
+    <div class="ni" onclick="gv('dash')"><span class="ni-ico">📊</span>Transaction History</div>
+    <div class="ni" onclick="gv('dash')"><span class="ni-ico">💲</span>Sources And Uses Of Cash</div>
+    <div class="ni" onclick="gv('data')"><span class="ni-ico">⬇</span>Consolidated Daily Data</div>
+    <div style="flex:1"></div>
+    <div class="ni" onclick="gv('roles')"><span class="ni-ico">👥</span>Team Roles</div>
+    <div class="ni"><span class="ni-ico">🚪</span>Logout</div>
+  </div>
 </div>
 
 <!-- MAIN -->
@@ -371,85 +387,72 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" id="tab-dash" onclick="gotoView('dash')">🏠 Dashboard</div>
-  <div class="tab" id="tab-data" onclick="gotoView('data')">📋 Consolidated Daily Data</div>
-  <div class="tab" id="tab-score" onclick="gotoView('score')">🏆 Scoreboard</div>
+  <div class="tab on" id="tab-dash" onclick="gv('dash')">🏠 Dashboard</div>
+  <div class="tab" id="tab-roles" onclick="gv('roles')">👥 Team Roles</div>
+  <div class="tab" id="tab-data" onclick="gv('data')">📋 Daily Data</div>
+  <div class="tab" id="tab-score" onclick="gv('score')">🏆 Scoreboard</div>
 </div>
 
-<!-- ══════════════════════════════════
-     VIEW 1 — DASHBOARD
-══════════════════════════════════ -->
+<!-- ══════ VIEW: DASHBOARD ══════ -->
 <div class="view on" id="view-dash">
-<div class="dash-view">
+<div class="dash">
 
-  <!-- LEFT -->
-  <div class="dash-left">
+  <!-- LEFT COL -->
+  <div class="col-l">
 
-    <!-- MATERIAL -->
-    <div class="sp">
-      <div class="sp-hdr">
-        <div class="sp-hdr-left"><span>MATERIAL</span></div>
-        <span class="sp-ext">↗</span>
+    <!-- MATERIAL PANEL -->
+    <div class="sc">
+      <div class="sc-h"><span>MATERIAL</span><span class="sc-ext">↗</span></div>
+      <div class="sc-b">
+        <div class="flask">🧪</div>
+        <div class="mr"><span class="ml">ROP</span><input class="mi glow" id="v-rop" type="number" value="24" oninput="calcKit()"><span class="mu">Kits</span></div>
+        <div class="mr"><span class="ml">Quantity</span><input class="mi glow" id="v-qty" type="number" value="120" oninput="calcKit()"><span class="mu">Kits</span></div>
+        <div class="mwarn">⚠️ Change ONE parameter per edit only</div>
+        <div class="minfo">Order cost: <b id="kit-cost">$73,000</b><br>Days left: <b id="days-left" style="color:var(--navy)">218</b></div>
       </div>
-      <div class="sp-body">
-        <div class="flask-icon">🧪</div>
-        <div class="mat-row">
-          <span class="mat-label">ROP</span>
-          <input class="mat-inp glow-inp" id="v-rop" type="number" value="24" oninput="calcKit()">
-          <span class="mat-unit">Kits</span>
-        </div>
-        <div class="mat-row">
-          <span class="mat-label">Quantity</span>
-          <input class="mat-inp glow-inp" id="v-qty" type="number" value="120" oninput="calcKit()">
-          <span class="mat-unit">Kits</span>
-        </div>
-        <div class="mat-warn">⚠️ Change ONE parameter per edit session</div>
-        <div class="mat-info">
-          Order cost: <b id="kit-cost">$73,000</b><br>
-          Days left: <b id="days-left" style="color:#1c3461">218</b>
-        </div>
-      </div>
-      <div class="sp-nav"><div class="sdots"><div class="sdot"></div><div class="sdot on"></div><div class="sdot"></div></div><span>Click to next</span></div>
+      <div class="sc-nav"><div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div></div><span>Click to next</span></div>
     </div>
 
-    <!-- ORDERS -->
-    <div class="sp">
-      <div class="sp-hdr">
-        <div class="sp-hdr-left"><div class="sp-num" id="contract-badge">1</div><span>ORDERS</span></div>
-        <span class="sp-ext">↗</span>
+    <!-- ORDERS PANEL -->
+    <div class="sc">
+      <div class="sc-h">
+        <div style="display:flex;align-items:center"><div class="sc-num" id="c-badge">1</div><span>ORDERS</span></div>
+        <span class="sc-ext">↗</span>
       </div>
-      <div class="sp-body">
-        <div style="font-size:10px;font-weight:600;color:#555;margin-bottom:4px">Contract:</div>
-        <select class="csel glow-inp" id="v-contract" onchange="onContract()">
-          <option value="1">Contract 1 — $750 (7-day)</option>
-          <option value="2">Contract 2 — $1,000 (1-day)</option>
-          <option value="3">Contract 3 — $1,250 (0.5-day)</option>
+      <div class="sc-b">
+        <div style="font-size:10px;font-weight:600;color:#555;margin-bottom:3px">Active Contract:</div>
+        <select class="csel glow" id="v-contract" onchange="onContract()">
+          <option value="1">Contract 1 — $750 / job</option>
+          <option value="2">Contract 2 — $1,000 / job</option>
+          <option value="3">Contract 3 — $1,250 / job</option>
         </select>
-        <div class="csel-detail" id="contract-detail">Quoted: 7d · Max: 14d · Revenue: $750</div>
-        <div class="rev-pills">
-          <div class="rpill" id="rp1"><span class="rp-price">$750</span><span class="rp-lbl">C1</span></div>
-          <div class="rpill" id="rp2"><span class="rp-price">$1,000</span><span class="rp-lbl">C2</span></div>
-          <div class="rpill" id="rp3"><span class="rp-price">$1,250</span><span class="rp-lbl">C3</span></div>
+        <div class="cdet" id="c-det">Quoted: 7d · Max: 14d · Full rev: $750</div>
+        <div class="rpills">
+          <div class="rp" id="rp1"><span class="rp-v">$750</span><span class="rp-l">C1</span></div>
+          <div class="rp" id="rp2"><span class="rp-v">$1,000</span><span class="rp-l">C2</span></div>
+          <div class="rp" id="rp3"><span class="rp-v">$1,250</span><span class="rp-l">C3</span></div>
         </div>
       </div>
-      <div class="sp-nav"><div class="sdots"><div class="sdot"></div><div class="sdot"></div><div class="sdot on"></div></div><span>Click to next</span></div>
+      <div class="sc-nav"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot on"></div></div><span>Click to next</span></div>
     </div>
 
-    <!-- DECISION BOX -->
-    <div class="dec-box" id="dec-box">
-      <div class="dec-title" id="dec-title">🚦 RECOMMENDATION</div>
-      <div class="dec-body" id="dec-body">Enter live metrics in the ⭐ panel to get real-time decisions →</div>
+    <!-- COMMAND BOX -->
+    <div class="cmd-box" id="cmd-box">
+      <div class="cmd-who"><span class="cmd-role" id="cmd-role">WAITING</span></div>
+      <div class="cmd-title" id="cmd-title">🚦 Paste data to get orders</div>
+      <div class="cmd-steps" id="cmd-steps">
+        <div class="cmd-step"><div class="cmd-step-n">→</div><div>Enter live metrics in the ⭐ panel, or paste your Consolidated Daily Data in the Daily Data tab to auto-populate.</div></div>
+      </div>
     </div>
 
   </div>
 
-  <!-- CENTER -->
-  <div class="dash-center">
-
+  <!-- CENTER COL -->
+  <div class="col-c">
     <div class="jrel-row">
       <span class="start-lbl">Start</span>
       <span style="font-size:9px;color:#555">── Step 1 ──→</span>
-      <button class="jrel-btn">Job<br>Release</button>
+      <button class="jrel">Job<br>Release</button>
       <span style="font-size:9px;color:#555">↑</span>
     </div>
 
@@ -457,364 +460,445 @@ input[type=number]{-moz-appearance:textfield}
       <div class="lab-title">THE LABORATORY</div>
 
       <!-- STATION 1 -->
-      <div class="station s1">
-        <div class="st-head">
-          <div><div class="st-name">STATION 1</div><div class="st-sub">Sample Preparing</div></div>
-          <span class="st-ext">↗</span>
+      <div class="stn s1">
+        <div class="stn-h">
+          <div><div>STATION 1</div><div class="stn-sub">Sample Preparing</div></div>
+          <span class="stn-ext">↗</span>
         </div>
-        <div class="st-body">
-          <div class="mbox" id="mb1">🧫<div class="mbox-num" id="mc1">1</div></div>
-          <div class="st-ctrl">
-            <div class="ul-row"><span>Utilization</span><span class="ul-val" id="ulv1">—</span></div>
-            <div class="ul-track"><div class="ul-fill" id="ulb1" style="width:0%"></div></div>
-            <div class="st-queue">Queue: <b id="stq1">—</b></div>
-            <div class="mach-row">
+        <div class="stn-b">
+          <div class="mbox" id="mb1">🧫<div class="mbox-n" id="mc1">1</div></div>
+          <div class="stc">
+            <div class="ulr"><span>Utilization</span><span class="ulv" id="ulv1">—</span></div>
+            <div class="ult"><div class="ulf" id="ulb1" style="width:0%"></div></div>
+            <div class="sq">Queue: <b id="sq1">—</b></div>
+            <div class="mach-edit">
               <label>Machines:</label>
-              <div class="stepper">
-                <div class="sbtn" onclick="chgM(1,-1)">−</div>
-                <div class="snum" id="mn1">1</div>
-                <div class="sbtn" onclick="chgM(1,1)">+</div>
+              <div class="stp">
+                <div class="sb2" onclick="chgM(1,-1)">−</div>
+                <div class="sn" id="mn1">1</div>
+                <div class="sb2" onclick="chgM(1,1)">+</div>
               </div>
-              <span class="scost">$90k / $10k</span>
+              <span class="scost">$90k/$10k</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flow"><span>↓</span><span class="step-tag">Step 2</span><span></span></div>
+      <div class="step-r"><span>↓</span><span class="step-tag">Step 2</span></div>
 
       <!-- STATION 2 -->
-      <div class="station s2">
-        <div class="st-head">
-          <div><div class="st-name">STATION 2</div><div class="st-sub">Testing</div></div>
-          <span class="st-ext">↗</span>
+      <div class="stn s2">
+        <div class="stn-h">
+          <div><div>STATION 2</div><div class="stn-sub">Testing (Step 2 + Step 4)</div></div>
+          <span class="stn-ext">↗</span>
         </div>
-        <div class="st-body">
-          <div class="mbox" id="mb2">🔬<div class="mbox-num" id="mc2">1</div></div>
-          <div class="st-ctrl">
-            <div class="ul-row"><span>Utilization</span><span class="ul-val" id="ulv2">—</span></div>
-            <div class="ul-track"><div class="ul-fill" id="ulb2" style="width:0%"></div></div>
-            <div class="st-queue">Queue: <b id="stq2">—</b></div>
-            <div class="mach-row">
+        <div class="stn-b">
+          <div class="mbox" id="mb2">🔬<div class="mbox-n" id="mc2">1</div></div>
+          <div class="stc">
+            <div class="ulr"><span>Utilization</span><span class="ulv" id="ulv2">—</span></div>
+            <div class="ult"><div class="ulf" id="ulb2" style="width:0%"></div></div>
+            <div class="sq">Queue: <b id="sq2">—</b></div>
+            <div class="mach-edit">
               <label>Machines:</label>
-              <div class="stepper">
-                <div class="sbtn" onclick="chgM(2,-1)">−</div>
-                <div class="snum" id="mn2">1</div>
-                <div class="sbtn" onclick="chgM(2,1)">+</div>
+              <div class="stp">
+                <div class="sb2" onclick="chgM(2,-1)">−</div>
+                <div class="sn" id="mn2">1</div>
+                <div class="sb2" onclick="chgM(2,1)">+</div>
               </div>
-              <span class="scost">$80k / $10k</span>
+              <span class="scost">$80k/$10k</span>
             </div>
-            <div class="pri-row">
-              <div class="pri-btn on" id="pri-fifo" onclick="setPri('fifo')">FIFO</div>
-              <div class="pri-btn" id="pri-s2" onclick="setPri('s2')">Pri Step2</div>
-              <div class="pri-btn" id="pri-s4" onclick="setPri('s4')">Pri Step4</div>
+            <div class="stpr">
+              <div class="pb on" id="pri-fifo" onclick="setPri('fifo')">FIFO</div>
+              <div class="pb" id="pri-s2" onclick="setPri('s2')">Pri Step 2</div>
+              <div class="pb" id="pri-s4" onclick="setPri('s4')">Pri Step 4</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flow"><span>↓</span><span class="step-tag">Step 3</span><span class="green-flow">→ Completed</span></div>
+      <div class="step-r"><span>↓</span><span class="step-tag">Step 3</span><span class="grn-lbl">→ Completed</span></div>
 
       <!-- STATION 3 -->
-      <div class="station s3">
-        <div class="st-head">
-          <div><div class="st-name">STATION 3</div><div class="st-sub">Centrifuging</div></div>
-          <span class="st-ext">↗</span>
+      <div class="stn s3">
+        <div class="stn-h">
+          <div><div>STATION 3</div><div class="stn-sub">Centrifuging</div></div>
+          <span class="stn-ext">↗</span>
         </div>
-        <div class="st-body">
-          <div class="mbox" id="mb3">🌀<div class="mbox-num" id="mc3">1</div></div>
-          <div class="st-ctrl">
-            <div class="ul-row"><span>Utilization</span><span class="ul-val" id="ulv3">—</span></div>
-            <div class="ul-track"><div class="ul-fill" id="ulb3" style="width:0%"></div></div>
-            <div class="st-queue">Queue: <b id="stq3">—</b></div>
-            <div class="mach-row">
+        <div class="stn-b">
+          <div class="mbox" id="mb3">🌀<div class="mbox-n" id="mc3">1</div></div>
+          <div class="stc">
+            <div class="ulr"><span>Utilization</span><span class="ulv" id="ulv3">—</span></div>
+            <div class="ult"><div class="ulf" id="ulb3" style="width:0%"></div></div>
+            <div class="sq">Queue: <b id="sq3">—</b></div>
+            <div class="mach-edit">
               <label>Machines:</label>
-              <div class="stepper">
-                <div class="sbtn" onclick="chgM(3,-1)">−</div>
-                <div class="snum" id="mn3">1</div>
-                <div class="sbtn" onclick="chgM(3,1)">+</div>
+              <div class="stp">
+                <div class="sb2" onclick="chgM(3,-1)">−</div>
+                <div class="sn" id="mn3">1</div>
+                <div class="sb2" onclick="chgM(3,1)">+</div>
               </div>
-              <span class="scost">$100k / $10k</span>
+              <span class="scost">$100k/$10k</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flow" style="justify-content:flex-end"><span class="step-tag">Step 4 ↑ returns to St2</span></div>
+      <div class="step-r" style="justify-content:flex-end"><span class="step-tag">Step 4 ↑ back to Station 2</span></div>
       <div class="end-lbl">↓ End</div>
     </div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="dash-right">
+  <!-- RIGHT COL -->
+  <div class="col-r">
 
-    <!-- CASH BALANCE -->
-    <div class="sp">
-      <div class="cash-hdr">
-        <span>CASH BALANCE: <span id="cash-display">$ 1,068,917</span></span>
+    <!-- CASH -->
+    <div class="sc">
+      <div class="cash-h">
+        <span>CASH BALANCE: <span id="cash-disp">$ —</span></span>
         <span style="cursor:pointer">▼</span>
       </div>
-      <div class="cash-body">
-        <div class="cash-ico">💰</div>
-        <input class="cash-inp glow-inp" id="cash-right" placeholder="$ —" oninput="syncCash(this.value)">
+      <div style="padding:9px;text-align:center">
+        <div style="font-size:28px;margin:3px 0">💰</div>
+        <input class="cash-inp glow" id="cash-r" placeholder="$ —" oninput="syncCash(this.value)">
         <div style="font-size:9px;color:#999;margin-top:3px">Updated each sim day</div>
       </div>
-      <div class="sp-nav"><div class="sdots"><div class="sdot on"></div><div class="sdot"></div></div><span>Click to next</span></div>
+      <div class="sc-nav"><div class="dots"><div class="dot on"></div><div class="dot"></div></div><span>Click to next</span></div>
     </div>
 
-    <!-- ⭐ METRICS INPUT -->
-    <div class="metrics-panel">
-      <div class="metrics-hdr"><div class="m-dot"></div>⭐ LIVE METRICS — Enter here</div>
-      <div class="metrics-grid">
-        <div class="mg-item"><label>St1 Utilization</label><input class="mg-inp" id="in-u1" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
-        <div class="mg-item"><label>St2 Utilization</label><input class="mg-inp" id="in-u2" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
-        <div class="mg-item"><label>St3 Utilization</label><input class="mg-inp" id="in-u3" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
-        <div class="mg-item"><label>Avg Lead Time (d)</label><input class="mg-inp" id="in-lt" type="number" step=".001" min="0" placeholder="e.g. 0.54" oninput="onMetrics()"></div>
-        <div class="mg-item"><label>St1 Queue (jobs)</label><input class="mg-inp" id="in-q1" type="number" step=".1" min="0" placeholder="0" oninput="onMetrics()"></div>
-        <div class="mg-item"><label>Kit Queue (jobs)</label><input class="mg-inp" id="in-qj" type="number" step="1" min="0" placeholder="0" oninput="onMetrics()"></div>
+    <!-- METRICS -->
+    <div class="met-panel">
+      <div class="met-h"><div class="pulse"></div>⭐ LIVE METRICS — Enter here</div>
+      <div class="met-g">
+        <div><label class="mg-lbl">St1 Utilization</label><input class="mg-i" id="in-u1" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
+        <div><label class="mg-lbl">St2 Utilization</label><input class="mg-i" id="in-u2" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
+        <div><label class="mg-lbl">St3 Utilization</label><input class="mg-i" id="in-u3" type="number" step=".001" min="0" max="1" placeholder="0.000" oninput="onMetrics()"></div>
+        <div><label class="mg-lbl">Avg Lead Time (d)</label><input class="mg-i" id="in-lt" type="number" step=".001" min="0" placeholder="e.g. 0.54" oninput="onMetrics()"></div>
+        <div><label class="mg-lbl">St1 Queue (jobs)</label><input class="mg-i" id="in-q1" type="number" step=".1" min="0" placeholder="0" oninput="onMetrics()"></div>
+        <div><label class="mg-lbl">Kit Queue (jobs)</label><input class="mg-i" id="in-qj" type="number" step="1" min="0" placeholder="0" oninput="onMetrics()"></div>
       </div>
-      <div class="metrics-hint">⬆ From Consolidated Daily Data tab</div>
+      <div class="met-hint">⬆ Auto-filled when you paste Daily Data</div>
     </div>
 
     <!-- FINISHED ORDERS -->
-    <div class="sp" style="flex:1">
-      <div class="sp-hdr"><span>FINISHED ORDERS</span><span class="sp-ext">↗</span></div>
-      <div class="fin-body">
-        <div class="fin-ico">🖨️</div>
+    <div class="sc" style="flex:1">
+      <div class="sc-h"><span>FINISHED ORDERS</span><span class="sc-ext">↗</span></div>
+      <div style="padding:9px;text-align:center">
+        <div style="font-size:30px;margin:6px 0">🖨️</div>
         <div style="font-size:10px;color:#999">Completed jobs</div>
       </div>
-      <div class="sp-nav"><div class="sdots"><div class="sdot"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div></div><span>Click to next</span></div>
+      <div class="sc-nav"><div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div><span>Click to next</span></div>
     </div>
 
   </div>
 </div>
-</div><!-- end view-dash -->
+</div><!-- end dash view -->
 
-<!-- ══════════════════════════════════
-     VIEW 2 — DAILY DATA
-══════════════════════════════════ -->
+<!-- ══════ VIEW: ROLES ══════ -->
+<div class="view" id="view-roles">
+<div class="roles-view">
+  <div class="roles-title">👥 Team Roles — 5 People, One Goal: Maximize Final Cash</div>
+  <div class="roles-sub">Each person owns their domain. Paste data every ~5 minutes and everyone acts on their role's command.</div>
+  <div class="roles-grid">
+
+    <div class="role-card">
+      <div class="role-hdr" style="background:#1c3461"><span class="role-ico">👑</span><span>Person 1</span><span class="role-num">COMMANDER</span></div>
+      <div class="role-body">
+        <div class="role-name">Role</div>
+        <div class="role-title">Commander — Final Decision Authority</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico">📋</span><span>Reads the Command Box and announces the current priority action to the team</span></div>
+          <div class="rt"><span class="rt-ico">✅</span><span>Approves ALL purchases (machines, kits) before anyone clicks anything</span></div>
+          <div class="rt"><span class="rt-ico">📣</span><span>Calls out contract upgrades/downgrades — says "switch now" or "hold"</span></div>
+          <div class="rt"><span class="rt-ico">💰</span><span>Tracks cash balance and approves spending vs. the $1M+ target</span></div>
+          <div class="rt"><span class="rt-ico">🔚</span><span>Manages end-game wind-down: sells machines Day 180+, cuts kits Day 190+</span></div>
+        </div>
+        <span class="role-freq freq-cont">⚡ Continuous — every data paste</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-hdr" style="background:#2d7d3a"><span class="role-ico">🏭</span><span>Person 2</span><span class="role-num">STATION MONITOR</span></div>
+      <div class="role-body">
+        <div class="role-name">Role</div>
+        <div class="role-title">Station Monitor — Bottleneck Hunter</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico">📊</span><span>Watches St1, St2, St3 utilization — enters them into the ⭐ Live Metrics panel</span></div>
+          <div class="rt"><span class="rt-ico">🚨</span><span>If any station hits ≥92% util, immediately tells Commander: "Station X is red, buy now"</span></div>
+          <div class="rt"><span class="rt-ico">⚠️</span><span>If ≥85% and trending up over 2 data pulls, warns Commander to prepare purchase</span></div>
+          <div class="rt"><span class="rt-ico">➕</span><span>On Commander approval: clicks the + button to buy a machine on the correct station</span></div>
+          <div class="rt"><span class="rt-ico">💸</span><span>Day 180+: Sells machines on any station below 55% util (click − button)</span></div>
+        </div>
+        <span class="role-freq freq-check">👁 Every data pull — compare to last pull</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-hdr" style="background:#c0392b"><span class="role-ico">📄</span><span>Person 3</span><span class="role-num">CONTRACT MANAGER</span></div>
+      <div class="role-body">
+        <div class="role-name">Role</div>
+        <div class="role-title">Contract Manager — Revenue Optimizer</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico">📈</span><span>Monitors Avg Lead Time — enters it into the ⭐ panel and watches revenue pills</span></div>
+          <div class="rt"><span class="rt-ico">🚀</span><span>LT &lt; 0.5 days and on C1 or C2: tell Commander "ready for Contract 3 upgrade"</span></div>
+          <div class="rt"><span class="rt-ico">⬆️</span><span>LT &lt; 1.0 day and on C1: tell Commander "ready for Contract 2 upgrade"</span></div>
+          <div class="rt"><span class="rt-ico">🔴</span><span>LT exceeds contract limit: immediately alert Commander "downgrade NOW, losing money"</span></div>
+          <div class="rt"><span class="rt-ico">🔬</span><span>Also manages Station 2 priority: switch to "Pri Step 4" when St2 queue is building</span></div>
+        </div>
+        <span class="role-freq freq-check">👁 Every data pull — LT is the key metric</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-hdr" style="background:#b06012"><span class="role-ico">📦</span><span>Person 4</span><span class="role-num">INVENTORY MANAGER</span></div>
+      <div class="role-body">
+        <div class="role-name">Role</div>
+        <div class="role-title">Inventory Manager — Kit Supply Chain</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico">📦</span><span>Monitors "kits 1" queue — enters Kit Queue into ⭐ panel</span></div>
+          <div class="rt"><span class="rt-ico">🚨</span><span>If Kit Queue &gt; 3 jobs: immediately alert Commander "kits starving — raise ROP now"</span></div>
+          <div class="rt"><span class="rt-ico">⚙️</span><span>On Commander approval: updates ROP or Quantity in the Material panel (ONE change only)</span></div>
+          <div class="rt"><span class="rt-ico">🔚</span><span>Day 190+: gradually reduce Order Qty each session to avoid holding dead stock at Day 268</span></div>
+          <div class="rt"><span class="rt-ico">💡</span><span>Rule of thumb: ROP = 2× daily demand. Qty = enough to last until next order arrives (4 days)</span></div>
+        </div>
+        <span class="role-freq freq-watch">📦 Watch kits queue every pull</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-hdr" style="background:#7b2fbe"><span class="role-ico">💻</span><span>Person 5</span><span class="role-num">DATA ANALYST</span></div>
+      <div class="role-body">
+        <div class="role-name">Role</div>
+        <div class="role-title">Data Analyst — Eyes &amp; Ears</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico">⬇️</span><span>Every ~5 minutes: download Consolidated Daily Data from Littlefield</span></div>
+          <div class="rt"><span class="rt-ico">📋</span><span>Copy ALL data rows → paste into Daily Data tab → click Parse (dashboard auto-updates)</span></div>
+          <div class="rt"><span class="rt-ico">📣</span><span>Announces: "Day X data loaded — [summary of key metrics]" to the team</span></div>
+          <div class="rt"><span class="rt-ico">📊</span><span>Watches trends: is utilization rising? Is LT creeping up? Flags changes to Commander</span></div>
+          <div class="rt"><span class="rt-ico">🏆</span><span>Updates Scoreboard tab with competitor cash balances to track our ranking</span></div>
+        </div>
+        <span class="role-freq freq-when">⏱ Every 5 minutes — set a timer</span>
+      </div>
+    </div>
+
+    <!-- Quick Reference Card -->
+    <div class="role-card" style="border-color:var(--gold)">
+      <div class="role-hdr" style="background:#8a6000"><span class="role-ico">⚡</span><span>Quick Reference</span><span class="role-num">ALL ROLES</span></div>
+      <div class="role-body">
+        <div class="role-name">Decision Thresholds</div>
+        <div class="role-title">Know These Numbers Cold</div>
+        <div class="role-tasks">
+          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Util ≥ 92%</b> → Buy machine immediately (crit)</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--warn)">🟠</span><span><b>Util ≥ 85%</b> → Prepare to buy, watch next pull</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--ok)">🟢</span><span><b>LT &lt; 0.5d</b> → Upgrade to Contract 3 ($1,250)</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--ok)">🟢</span><span><b>LT &lt; 1.0d</b> → Upgrade to Contract 2 ($1,000)</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Kit queue &gt; 3</b> → Raise ROP (revenue loss every second)</span></div>
+          <div class="rt"><span class="rt-ico">💡</span><span><b>ONE change at a time</b> in Material panel (ROP or Qty, never both)</span></div>
+          <div class="rt"><span class="rt-ico">🏁</span><span><b>Day 180</b> → Sell low-util machines. <b>Day 190</b> → Cut kit qty</span></div>
+        </div>
+        <span class="role-freq freq-cont">Machine costs: St1=$90k · St2=$80k · St3=$100k</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- end roles view -->
+
+<!-- ══════ VIEW: DAILY DATA ══════ -->
 <div class="view" id="view-data">
 <div class="data-view">
-
-  <div class="data-banner">
-    <h3>📋 Consolidated Daily Data — Paste from Littlefield</h3>
-    <p>Copy your downloaded Excel data and paste below. The dashboard auto-updates from the latest row.</p>
+  <div class="banner">
+    <h3>📋 Consolidated Daily Data — Paste from Littlefield (Person 5 does this every ~5 min)</h3>
+    <p>Copy your downloaded Excel data and paste below. Dashboard and Command Box auto-update instantly.</p>
     <div class="steps-row">
-      <div class="step-pill"><div class="step-n">1</div>In Littlefield → "Consolidated Daily Data"</div>
-      <div class="step-pill"><div class="step-n">2</div>Download → open the Excel file</div>
-      <div class="step-pill"><div class="step-n">3</div>Select ALL data rows (not the group headers)</div>
-      <div class="step-pill"><div class="step-n">4</div>Copy (Ctrl+C) → click box below → Paste</div>
-      <div class="step-pill green"><div class="step-n">5</div>Click Parse → dashboard auto-updates!</div>
+      <div class="sp2"><div class="spn">1</div>Littlefield → "Consolidated Daily Data"</div>
+      <div class="sp2"><div class="spn">2</div>Download → open Excel file</div>
+      <div class="sp2"><div class="spn">3</div>Select ALL numeric rows (not header rows)</div>
+      <div class="sp2"><div class="spn">4</div>Ctrl+C → click below → Ctrl+V</div>
+      <div class="sp2 g"><div class="spn">5</div>Click Parse → whole dashboard updates!</div>
     </div>
   </div>
-
-  <div class="paste-zone">
-    <div class="paste-lbl">📥 Paste your tab-separated data here:</div>
-    <textarea class="paste-ta" id="paste-ta" placeholder="Paste Littlefield data here...&#10;&#10;Expected 24 columns (tab-separated):&#10;Days · Queued jobs · Jobs accepted 1/2/3 · kits 1 · Utilization 1 · Avg Machine 1 · kits 2 · Utilization 2 · Avg Machine 2 · kits 3 · Utilization 3 · Avg Machine 3 · Jobs out 1/2/3 · Revenue 1/2/3 · Lead time 1/2/3 · Cash balance"></textarea>
-    <div class="btn-bar">
-      <button class="btn btn-go" onclick="parseData()">⚡ Parse &amp; Update Dashboard</button>
-      <button class="btn btn-clr" onclick="clearData()">🗑 Clear</button>
-      <span class="parse-msg" id="parse-msg"></span>
-    </div>
+  <textarea class="paste-ta" id="paste-ta" placeholder="Paste Littlefield tab-separated data here...&#10;&#10;Expected columns (24 total, tab-separated):&#10;Days · Queued jobs · Jobs accepted 1/2/3 · kits 1 · Utilization 1 · Avg Machine 1 · kits 2 · Utilization 2 · Avg Machine 2 · kits 3 · Utilization 3 · Avg Machine 3 · Jobs out 1/2/3 · Revenue 1/2/3 · Lead time 1/2/3 · Cash balance"></textarea>
+  <div class="btn-bar">
+    <button class="btn btn-go" onclick="parseData()">⚡ Parse &amp; Update Dashboard</button>
+    <button class="btn btn-clr" onclick="clearData()">🗑 Clear</button>
+    <span class="pmsg" id="pmsg"></span>
   </div>
-
   <div class="tbl-card">
-    <div class="tbl-hdr">
-      <span>Parsed Data <span class="tbl-sub" id="tbl-rows">— no data yet</span></span>
-      <span id="tbl-lastday" style="font-size:10px;color:rgba(255,255,255,.55)"></span>
+    <div class="tbl-hdr2">
+      <span>Parsed Data<span class="tbl-sub" id="tbl-rows">— no data yet</span></span>
+      <span id="tbl-last" style="font-size:9px;color:rgba(255,255,255,.5)"></span>
     </div>
     <div class="tbl-wrap">
-      <table class="dtbl">
+      <table class="dt">
         <thead><tr>
-          <th>Day</th>
-          <th style="background:#8a1a10">Queued</th>
-          <th>Jobs C1</th><th>Jobs C2</th><th>Jobs C3</th>
+          <th>Day</th><th style="background:#7a1a10">Queued</th>
+          <th>C1 Jobs</th><th>C2 Jobs</th><th>C3 Jobs</th>
           <th>St1 Q</th><th style="background:#1a5c28">St1 Util</th><th>St1 M</th>
-          <th>St2 Q</th><th style="background:#8a1a10">St2 Util</th><th>St2 M</th>
+          <th>St2 Q</th><th style="background:#7a1a10">St2 Util</th><th>St2 M</th>
           <th>St3 Q</th><th style="background:#7a4000">St3 Util</th><th>St3 M</th>
           <th>Out C1</th><th>Out C2</th><th>Out C3</th>
           <th>Rev C1</th><th>Rev C2</th><th>Rev C3</th>
           <th style="background:#0e3070">LT C1</th><th>LT C2</th><th>LT C3</th>
           <th style="background:#0d1f40">Cash $k</th>
         </tr></thead>
-        <tbody id="dtbl-body">
-          <tr><td colspan="24" style="color:#bbb;padding:20px;text-align:center">Paste data above and click Parse</td></tr>
-        </tbody>
+        <tbody id="dtbl"><tr><td colspan="24" style="color:#bbb;padding:18px;text-align:center">Paste data above and click Parse</td></tr></tbody>
       </table>
     </div>
   </div>
-
 </div>
-</div><!-- end view-data -->
+</div><!-- end data view -->
 
-<!-- ══════════════════════════════════
-     VIEW 3 — SCOREBOARD
-══════════════════════════════════ -->
+<!-- ══════ VIEW: SCOREBOARD ══════ -->
 <div class="view" id="view-score">
 <div class="score-view">
-
-  <div class="sb-banner">
-    <div>
-      <div class="sb-banner-title">🏆 Overall Standing</div>
-      <div class="sb-banner-sub">Track all teams · Click any value to edit · Cash in $thousands</div>
-    </div>
-    <div class="sb-clock">Real time: <b id="sb-clock">6:30 PM</b> &nbsp;·&nbsp; Sim Day: <b id="sb-day">50</b></div>
-    <div class="sb-our">
-      <div class="sb-our-lbl">Our team</div>
-      <div class="sb-our-val" id="sb-our-name">falcons ★</div>
-    </div>
+  <div class="sb-top">
+    <div><div class="sb-h">🏆 Overall Standing</div><div class="sb-meta">Click any value to edit · Cash in $thousands</div></div>
+    <div class="sb-clk">Time: <b id="sb-clk">6:30 PM</b> · Day: <b id="sb-day">50</b></div>
+    <div class="sb-us"><div class="sb-usl">Our team</div><div class="sb-usv" id="sb-usv">falcons ★</div></div>
   </div>
-
-  <div class="sb-card">
-    <div class="sb-card-hdr">
-      <span>All Teams — Add competitors, update cash balances during game</span>
-      <button class="add-team-btn" onclick="showAdd()">+ Add Team</button>
+  <div class="sbc">
+    <div class="sbc-h">
+      <span>All Teams — Update cash balances during the game</span>
+      <button class="add-btn" onclick="showAdd()">+ Add Team</button>
     </div>
-    <table class="sbtbl">
+    <table class="sbt">
       <thead><tr>
-        <th style="width:55px">Rank</th>
+        <th style="width:50px">Rank</th>
         <th>Team Name</th>
-        <th style="width:140px">Cash ($k)</th>
+        <th style="width:130px">Cash ($k)</th>
         <th>Progress vs Leader</th>
-        <th>Notes / Strategy</th>
-        <th style="width:55px"></th>
+        <th>Notes</th>
+        <th style="width:48px"></th>
       </tr></thead>
-      <tbody id="sbtbl-body"></tbody>
+      <tbody id="sbtbl"></tbody>
     </table>
     <div class="add-form" id="add-form">
-      <input class="a-inp" id="af-name" placeholder="Team name" style="width:130px">
-      <input class="a-inp" id="af-cash" type="number" placeholder="Cash in $k (e.g. 1068)" style="width:180px">
-      <select class="a-inp" id="af-us" style="width:130px">
+      <input class="ai" id="af-name" placeholder="Team name" style="width:120px">
+      <input class="ai" id="af-cash" type="number" placeholder="Cash $k (e.g. 1068)" style="width:170px">
+      <select class="ai" id="af-us" style="width:120px">
         <option value="">Other team</option>
         <option value="us">★ This is our team</option>
       </select>
-      <button class="a-sub" onclick="addTeam()">Add</button>
+      <button class="a-go" onclick="addTeam()">Add</button>
       <button class="a-can" onclick="hideAdd()">Cancel</button>
     </div>
   </div>
-
-  <!-- Strategy notes -->
-  <div class="sp" style="border-color:#9040e0">
-    <div class="sp-hdr"><span>📝 Strategy Notes vs Competition</span></div>
-    <div class="sp-body">
-      <textarea class="notes-box" placeholder="e.g. Team 'hawks' in 2nd at $1.2M — they're on Contract 2, we should upgrade to C3 to pull ahead...&#10;Team 'bears' keeps buying machines — they'll run out of cash by Day 150..."></textarea>
+  <div class="sc" style="border-color:var(--purple2);flex-shrink:0">
+    <div class="sc-h"><span>📝 Strategy Notes vs Competition</span></div>
+    <div class="sc-b">
+      <textarea class="notes-ta" placeholder="e.g. Team 'hawks' on Contract 2 at $1.2M — if we cut LT below 0.5d we can jump to C3 and pull ahead..."></textarea>
     </div>
   </div>
-
 </div>
-</div><!-- end view-score -->
+</div><!-- end score view -->
 
 </div><!-- end main -->
-</div><!-- end body-wrap -->
+</div><!-- end body -->
 
 <script>
 // ══════════════ STATE ══════════════
-let G = {
-  machines: {1:1, 2:1, 3:1},
-  priority: 'fifo',
-  contract: 1,
-  teams: [{id:'t1', name:'falcons', cash:1068.917, us:true, notes:''}],
-  nextId: 2
+const G = {
+  M:{1:1,2:1,3:1}, pri:'fifo', contract:1,
+  teams:[{id:'t1',name:'falcons',cash:1068.917,us:true,notes:''}],
+  nid:2
 };
 
-// ══════════════ VIEW SWITCHING ══════════════
-function gotoView(v) {
-  ['dash','data','score'].forEach(id => {
-    document.getElementById('view-'+id).classList.toggle('on', id===v);
-    document.getElementById('tab-'+id).classList.toggle('active', id===v);
+// ══════════════ VIEW SWITCH ══════════════
+function gv(v) {
+  ['dash','roles','data','score'].forEach(id=>{
+    document.getElementById('view-'+id).classList.toggle('on',id===v);
+    const t=document.getElementById('tab-'+id);
+    if(t) t.classList.toggle('on',id===v);
+    document.querySelectorAll('.ni').forEach(n=>{
+      if(n.getAttribute('onclick')===`gv('${v}')`) n.classList.add('on');
+      else n.classList.remove('on');
+    });
   });
   if(v==='score') renderSB();
   updateSBClock();
 }
 
-// ══════════════ DAY / CLOCK ══════════════
+// ══════════════ CLOCK ══════════════
+function pad(n){return String(n).padStart(2,'0')}
 function onDay() {
-  const day = parseInt(document.getElementById('h-day').value) || 50;
-  document.getElementById('prog').style.width = Math.min(100,(day/268)*100)+'%';
-  const el = (day-50)*32.14; // seconds
-  const base = 18*3600 + 30*60;
-  const tot = base + el;
-  const h=Math.floor(tot/3600), m=Math.floor((tot%3600)/60), s=Math.floor(tot%60);
-  const ampm = h>=12?'PM':'AM', dh = h>12?h-12:h===0?12:h;
-  const ts = `${dh}:${pad(m)}:${pad(s)} ${ampm}`;
-  document.getElementById('h-clock').textContent = ts;
-  document.getElementById('h-elapsed').textContent = `${Math.floor(el/60)}m ${Math.floor(el%60)}s elapsed`;
-  document.getElementById('days-left').textContent = 268-day;
-  document.getElementById('sb-day').textContent = day;
-  document.getElementById('sb-clock').textContent = `${dh}:${pad(m)} ${ampm}`;
+  const day=parseInt(document.getElementById('h-day').value)||50;
+  document.getElementById('prog').style.width=Math.min(100,(day/268)*100)+'%';
+  const el=(day-50)*32.14, base=18*3600+30*60, tot=base+el;
+  const h=Math.floor(tot/3600),m=Math.floor((tot%3600)/60),s=Math.floor(tot%60);
+  const ampm=h>=12?'PM':'AM', dh=h>12?h-12:h===0?12:h;
+  const ts=`${dh}:${pad(m)}:${pad(s)} ${ampm}`;
+  document.getElementById('h-clock').textContent=ts;
+  document.getElementById('h-elapsed').textContent=`${Math.floor(el/60)}m ${Math.floor(el%60)}s elapsed`;
+  document.getElementById('days-left').textContent=268-day;
+  updateSBClock();
   calcKit(); decide();
 }
-function pad(n){return String(n).padStart(2,'0')}
 function updateSBClock(){
   const day=parseInt(document.getElementById('h-day').value)||50;
-  const el=(day-50)*32.14, base=18*3600+30*60, tot=base+el;
+  const el=(day-50)*32.14,base=18*3600+30*60,tot=base+el;
   const h=Math.floor(tot/3600),m=Math.floor((tot%3600)/60);
   const ampm=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;
-  document.getElementById('sb-clock').textContent=`${dh}:${pad(m)} ${ampm}`;
+  document.getElementById('sb-clk').textContent=`${dh}:${pad(m)} ${ampm}`;
   document.getElementById('sb-day').textContent=day;
 }
 
-// ══════════════ TEAM SYNC ══════════════
+// ══════════════ SYNC ══════════════
 function onTeam(){
-  const n = document.getElementById('h-team').value || 'falcons';
-  document.getElementById('sb-name').textContent = n+'@sim...';
-  document.getElementById('sb-our-name').textContent = n+' ★';
-  const t = G.teams.find(x=>x.us); if(t) t.name=n;
+  const n=document.getElementById('h-team').value||'falcons';
+  document.getElementById('sb-uname').textContent=n+'@sim';
+  document.getElementById('sb-usv').textContent=n+' ★';
+  const t=G.teams.find(x=>x.us); if(t) t.name=n;
 }
 function syncCash(v){
-  document.getElementById('h-cash').value = v;
-  document.getElementById('cash-display').textContent = v;
+  document.getElementById('h-cash').value=v;
+  document.getElementById('cash-disp').textContent=v;
 }
 
-// ══════════════ KIT CALC ══════════════
+// ══════════════ KIT COST ══════════════
 function calcKit(){
-  const qty = parseInt(document.getElementById('v-qty').value)||120;
-  document.getElementById('kit-cost').textContent = '$'+(1000+qty*600).toLocaleString();
+  const qty=parseInt(document.getElementById('v-qty').value)||120;
+  document.getElementById('kit-cost').textContent='$'+(1000+qty*600).toLocaleString();
   decide();
 }
 
 // ══════════════ CONTRACT ══════════════
 function onContract(){
-  G.contract = parseInt(document.getElementById('v-contract').value);
-  document.getElementById('contract-badge').textContent = G.contract;
-  const dets = {1:'Quoted: 7d · Max: 14d · Revenue: $750', 2:'Quoted: 1d · Max: 3d · Revenue: $1,000', 3:'Quoted: 0.5d · Max: 1d · Revenue: $1,250'};
-  document.getElementById('contract-detail').textContent = dets[G.contract];
+  G.contract=parseInt(document.getElementById('v-contract').value);
+  document.getElementById('c-badge').textContent=G.contract;
+  const dets={1:'Quoted: 7d · Max: 14d · Full rev: $750',2:'Quoted: 1d · Max: 3d · Full rev: $1,000',3:'Quoted: 0.5d · Max: 1d · Full rev: $1,250'};
+  document.getElementById('c-det').textContent=dets[G.contract];
   onMetrics(); decide();
 }
 
 // ══════════════ MACHINES ══════════════
-function chgM(st, d){
-  G.machines[st] = Math.max(1, G.machines[st]+d);
-  document.getElementById('mn'+st).textContent = G.machines[st];
-  document.getElementById('mc'+st).textContent = G.machines[st];
+function chgM(st,d){
+  G.M[st]=Math.max(1,G.M[st]+d);
+  document.getElementById('mn'+st).textContent=G.M[st];
+  document.getElementById('mc'+st).textContent=G.M[st];
 }
 
 // ══════════════ PRIORITY ══════════════
 function setPri(p){
-  G.priority = p;
-  ['fifo','s2','s4'].forEach(id=>{
-    const el=document.getElementById('pri-'+id);
-    el.classList.remove('on','red');
-  });
-  const el=document.getElementById('pri-'+p);
-  el.classList.add('on');
-  if(p!=='fifo') el.classList.add('red');
+  G.pri=p;
+  ['fifo','s2','s4'].forEach(id=>{const e=document.getElementById('pri-'+id);e.classList.remove('on','red');});
+  const e=document.getElementById('pri-'+p);e.classList.add('on');
+  if(p!=='fifo') e.classList.add('red');
 }
 
-// ══════════════ UTIL BAR UPDATE ══════════════
-function setUtil(n, v, q){
-  const pct = Math.min(100,v*100);
-  const col = v>=.95?'#e74c3c':v>=.85?'#e67e22':v>=.70?'#f0b429':'#27ae60';
-  document.getElementById('ulb'+n).style.cssText = `width:${pct}%;background:${col}`;
-  document.getElementById('ulv'+n).style.color = col;
-  document.getElementById('ulv'+n).textContent = (v*100).toFixed(1)+'%';
-  const mb = document.getElementById('mb'+n);
-  mb.className = 'mbox '+(v>=.95?'crit':v>=.85?'warn':'ok');
-  if(q!==undefined) document.getElementById('stq'+n).textContent = q>0 ? q.toFixed(1)+' ⚠' : '0';
+// ══════════════ UTIL BARS ══════════════
+function setUtil(n,v,q){
+  const pct=Math.min(100,v*100);
+  const col=v>=.95?'#e74c3c':v>=.85?'#e67e22':v>=.70?'#f0b429':'#27ae60';
+  document.getElementById('ulb'+n).style.cssText=`width:${pct}%;background:${col}`;
+  document.getElementById('ulv'+n).style.color=col;
+  document.getElementById('ulv'+n).textContent=(v*100).toFixed(1)+'%';
+  const mb=document.getElementById('mb'+n);
+  mb.className='mbox '+(v>=.95?'crit':v>=.85?'warn':'ok');
+  if(q!==undefined) document.getElementById('sq'+n).textContent=q>0?q.toFixed(1)+' ⚠':'0';
 }
 
-// ══════════════ REVENUE CALC ══════════════
-function calcRev(lt, price, qLT, maxLT){
+// ══════════════ REVENUE ══════════════
+function calcRev(lt,price,qLT,maxLT){
   if(!lt||lt<=qLT) return price;
   if(lt>=maxLT) return 0;
   return Math.round(price*(1-(lt-qLT)/(maxLT-qLT)));
@@ -831,12 +915,12 @@ function onMetrics(){
   if(u2>0) setUtil(2,u2);
   if(u3>0) setUtil(3,u3);
   if(lt>0){
-    const rv = [calcRev(lt,750,7,14), calcRev(lt,1000,1,3), calcRev(lt,1250,.5,1)];
-    const mx = Math.max(...rv);
+    const rv=[calcRev(lt,750,7,14),calcRev(lt,1000,1,3),calcRev(lt,1250,.5,1)];
+    const mx=Math.max(...rv);
     rv.forEach((r,i)=>{
-      const el = document.getElementById('rp'+(i+1));
-      el.querySelector('.rp-price').textContent = '$'+r.toLocaleString();
-      el.classList.toggle('best', r===mx);
+      const el=document.getElementById('rp'+(i+1));
+      el.querySelector('.rp-v').textContent='$'+r.toLocaleString();
+      el.classList.toggle('best',r===mx);
     });
   }
   decide();
@@ -851,118 +935,209 @@ function decide(){
   const qj=parseFloat(document.getElementById('in-qj').value)||0;
   const day=parseInt(document.getElementById('h-day').value)||50;
   const c=G.contract;
-
   if(!u1&&!u2&&!u3&&!lt) return;
 
-  let state, title, body;
+  let state,role,title,steps;
 
   if(qj>3){
-    state='crit'; title='🚨 INCREASE KIT REORDER POINT NOW';
-    body=`${qj} jobs are waiting for kits — direct revenue loss every sim minute. Increase ROP in the Material panel. ⚠️ Only ONE parameter per edit session. Kits take 4 days to arrive.`;
+    state='crit'; role='PERSON 4 — INVENTORY';
+    title='🚨 KITS STARVING — Jobs waiting for raw materials!';
+    steps=[
+      `${qj} job(s) are queued waiting for kits right now — every second = lost revenue`,
+      'Go to Material panel → increase ROP (reorder point) by 10-20 units',
+      '⚠️ Change ONLY the ROP field — do NOT touch Quantity in the same session',
+      'Confirm with Commander before clicking. Kits arrive 4 days after order is placed'
+    ];
   } else if(u1>=.92){
-    state='crit'; title=`🚨 BUY STATION 1 MACHINE — Util ${(u1*100).toFixed(0)}%`;
-    body=`Station 1 (Sample Preparer) is a critical bottleneck. Click + on Station 1 machines. Cost $90,000. Need cash > $90k. Every job queuing here delays all downstream steps.`;
+    state='crit'; role='PERSON 2 — STATION MONITOR';
+    title=`🚨 BUY STATION 1 MACHINE — Util ${(u1*100).toFixed(0)}% (CRITICAL)`;
+    steps=[
+      `Station 1 (Sample Preparer) is ${(u1*100).toFixed(0)}% utilized — it IS the bottleneck`,
+      'Every job in the whole system is being delayed by Station 1',
+      `Commander: confirm cash > $90,000 available before proceeding`,
+      'Person 2: click the + button on Station 1 machine count to purchase'
+    ];
   } else if(u2>=.92){
-    state='crit'; title=`🚨 BUY STATION 2 MACHINE — Util ${(u2*100).toFixed(0)}%`;
-    body=`Station 2 (Tester) handles Step 2 AND Step 4. Try "Pri Step4" first to finish WIP faster. If congestion persists, buy machine ($80,000).`;
+    state='crit'; role='PERSON 3 — CONTRACT + PERSON 2 — STATIONS';
+    title=`🚨 STATION 2 CRITICAL — Util ${(u2*100).toFixed(0)}%`;
+    steps=[
+      `Station 2 (Tester) handles both Step 2 AND Step 4 — ${(u2*100).toFixed(0)}% is critical`,
+      'Person 3: First try switching to "Pri Step 4" in the Station 2 priority buttons — this often fixes LT',
+      'If congestion persists after next data pull, tell Commander to approve machine purchase',
+      'Commander: approve $80,000 for Station 2 machine if Pri Step 4 does not resolve it'
+    ];
   } else if(u3>=.92){
-    state='crit'; title=`🚨 BUY STATION 3 MACHINE — Util ${(u3*100).toFixed(0)}%`;
-    body=`Station 3 (Centrifuge) bottlenecked. Cost $100,000. Confirm St1 and St2 are not also congested before committing capital.`;
+    state='crit'; role='PERSON 2 — STATION MONITOR';
+    title=`🚨 BUY STATION 3 MACHINE — Util ${(u3*100).toFixed(0)}% (CRITICAL)`;
+    steps=[
+      `Station 3 (Centrifuge) is ${(u3*100).toFixed(0)}% utilized — final step bottleneck`,
+      'This is the most expensive machine at $100,000 — confirm cash available',
+      'Verify Station 1 and 2 are NOT also congested before spending $100k',
+      'Person 2: click + on Station 3 machine count after Commander approves'
+    ];
   } else if(u1>=.85){
-    state='warn'; title=`⚠️ Watch Station 1 — ${(u1*100).toFixed(0)}% utilization`;
-    body=`Approaching critical level. If queue grows over next 2 data pulls, prepare to buy a 2nd machine. Don't wait until 100%.`;
+    state='warn'; role='PERSON 2 — STATION MONITOR';
+    title=`⚠️ Watch Station 1 — ${(u1*100).toFixed(0)}% utilization (warning)`;
+    steps=[
+      `Station 1 at ${(u1*100).toFixed(0)}% — not yet critical but trending toward it`,
+      'Compare to previous data pull: is it going up or holding steady?',
+      'If rising across 2+ consecutive pulls, tell Commander to pre-approve $90k purchase',
+      'Do NOT buy yet — wait to confirm trend. Machines cost cash you need for final ranking'
+    ];
   } else if(u2>=.85){
-    state='warn'; title=`⚠️ Watch Station 2 — ${(u2*100).toFixed(0)}% utilization`;
-    body=`Switch to "Pri Step4" to clear WIP faster before spending $80k on a machine.`;
+    state='warn'; role='PERSON 3 — CONTRACT MANAGER';
+    title=`⚠️ Watch Station 2 — ${(u2*100).toFixed(0)}% utilization (warning)`;
+    steps=[
+      `Station 2 at ${(u2*100).toFixed(0)}% — handles Steps 2 and 4`,
+      'Switch Station 2 priority to "Pri Step 4" now — this clears WIP faster and often drops LT',
+      'Monitor next data pull: if still rising, escalate to Commander for $80k machine approval',
+      'Switching priority costs nothing — do it immediately without waiting for Commander approval'
+    ];
+  } else if(u3>=.85){
+    state='warn'; role='PERSON 2 — STATION MONITOR';
+    title=`⚠️ Watch Station 3 — ${(u3*100).toFixed(0)}% utilization (warning)`;
+    steps=[
+      `Station 3 at ${(u3*100).toFixed(0)}% — watch closely over next 2 data pulls`,
+      'If trending up, alert Commander to pre-approve $100,000 machine purchase',
+      'Station 3 is last step — bottleneck here means completed jobs are delayed at the end',
+      'Do NOT buy yet — confirm trend first'
+    ];
   } else if(lt>0&&lt<.4&&c<3&&day<200){
-    state='ok'; title='🚀 SWITCH TO CONTRACT 3 ($1,250 per order)';
-    body=`Avg lead time ${lt.toFixed(3)}d is below the 0.5-day threshold. Switch now via Orders dropdown. Earns $500 more per order vs Contract 1. Upgrade immediately.`;
+    state='ok'; role='PERSON 3 — CONTRACT MANAGER';
+    title='🚀 UPGRADE TO CONTRACT 3 NOW — $1,250 per job!';
+    steps=[
+      `Lead time is ${lt.toFixed(3)} days — well below the 0.5d threshold for Contract 3`,
+      'This earns $500 MORE per job vs Contract 1, and $250 more vs Contract 2',
+      'Tell Commander: "Ready to switch to Contract 3 — LT is clear"',
+      'Commander approves → Person 3: change the Orders dropdown to "Contract 3 — $1,250"'
+    ];
   } else if(lt>0&&lt<.8&&c<2&&day<200){
-    state='ok'; title='⬆️ SWITCH TO CONTRACT 2 ($1,000 per order)';
-    body=`Avg lead time ${lt.toFixed(3)}d is below the 1-day threshold. Upgrade earns +$250 per order. Click the Orders dropdown and select Contract 2 now.`;
+    state='ok'; role='PERSON 3 — CONTRACT MANAGER';
+    title='⬆️ UPGRADE TO CONTRACT 2 — $1,000 per job';
+    steps=[
+      `Lead time is ${lt.toFixed(3)} days — below the 1.0d threshold for Contract 2`,
+      'This earns $250 MORE per job vs Contract 1 — meaningful over 168 days',
+      'Tell Commander: "Ready for Contract 2 upgrade — LT is clear"',
+      'Commander approves → Person 3: change the Orders dropdown to "Contract 2 — $1,000"',
+      'Then watch closely: if LT rises above 1.0d after upgrade, downgrade immediately'
+    ];
   } else if(lt>0&&lt>(c===3?.5:c===2?1:7)){
-    state='crit'; title='🔴 DOWNGRADE CONTRACT — LEAD TIME TOO HIGH';
-    body=`Lead time ${lt.toFixed(2)}d exceeds Contract ${c}'s quoted time. You are losing revenue on EVERY order. Downgrade contract immediately to stop losses.`;
-  } else if(day>=180&&(u1||u2||u3)&&Math.min(u1||1,u2||1,u3||1)<.55){
-    const worst=[u1,u2,u3].indexOf(Math.min(u1||2,u2||2,u3||2))+1;
-    state='warn'; title=`💰 SELL EXCESS STATION ${worst} MACHINES`;
-    body=`Day ${day}: St${worst} utilization is below 55%, demand has peaked. Sell surplus machines for $10,000 each — they are worth $0 at Day 268.`;
+    state='crit'; role='PERSON 3 — CONTRACT MANAGER';
+    title='🔴 DOWNGRADE CONTRACT — LEAD TIME TOO HIGH, LOSING MONEY!';
+    steps=[
+      `Lead time ${lt.toFixed(2)}d exceeds Contract ${c}'s quoted limit — revenue is being penalized`,
+      c===3?'You are losing up to $750 per job. Every minute costs real money.':
+            'You are losing up to $250 per job on every order.',
+      'Person 3: immediately change Orders dropdown to Contract '+(c-1)+' without waiting',
+      'After downgrade: fix the bottleneck causing high LT, then re-upgrade when LT drops'
+    ];
+  } else if(day>=180&&(u1||u2||u3)){
+    const utils=[u1,u2,u3].map((u,i)=>u>0?{s:i+1,u}:null).filter(Boolean);
+    const low=utils.filter(x=>x.u<.55);
+    if(low.length){
+      state='warn'; role='PERSON 2 — STATION MONITOR + COMMANDER';
+      title=`💰 SELL MACHINES ON STATION${low.map(x=>` ${x.s}`).join(',')} — Day ${day}`;
+      steps=[
+        `Day ${day}: Demand has peaked. ${low.map(x=>`Station ${x.s} only ${(x.u*100).toFixed(0)}% utilized`).join(', ')}`,
+        'Machines sitting idle are worth $0 at Day 268. Sell them now for $10,000 each',
+        'Commander: calculate how many to sell (keep ≥1 per station, keep util below 85%)',
+        'Person 2: click − on the low-util station machine counts after Commander approves'
+      ];
+    } else {
+      state='ok'; role='COMMANDER';
+      title=`✅ End-game phase — Day ${day} of 268`;
+      steps=[
+        `All stations healthy. Day ${268-day} sim days remaining.`,
+        `Current contract: ${c===3?'Contract 3 ($1,250) — maximum revenue!':c===2?'Contract 2 ($1,000)':'Contract 1 ($750) — check if LT allows upgrade'}`,
+        'Begin planning machine sell-off once any station drops below 55% util',
+        day>=190?`Kit wind-down: reduce Order Qty — ${268-day} days left, unused kits = $0`:'Day 190+: start reducing kit Order Qty to avoid dead stock at Day 268'
+      ];
+    }
   } else if(day>=190){
-    state='warn'; title=`📦 REDUCE KIT ORDER QUANTITY — ${268-day} sim days left`;
-    body=`Unused kits = $0 at Day 268 (each costs $600). Reduce Order Qty. Remember: edit ROP and Qty in SEPARATE sessions.`;
+    state='warn'; role='PERSON 4 — INVENTORY MANAGER';
+    title=`📦 REDUCE KIT ORDER QUANTITY — ${268-day} sim days left`;
+    steps=[
+      `Day ${day}: ${268-day} sim days remain. Each kit ordered costs $600, unused kits = $0 at Day 268`,
+      `Estimate kits needed: ~${Math.max(10,Math.round((268-day)*8*0.6))} total kits should suffice`,
+      'Person 4: reduce Order Quantity in Material panel. Change ONLY Quantity (not ROP) this session',
+      'Repeat each session until Order Qty is just enough to cover remaining days'
+    ];
   } else {
-    state='ok'; title='✅ All Systems Normal — Keep Monitoring';
-    body=`St1 ${(u1*100).toFixed(0)}% · St2 ${(u2*100).toFixed(0)}% · St3 ${(u3*100).toFixed(0)}% · Avg LT ${lt.toFixed(3)}d · Kit queue ${qj}. Download and re-paste data every ~3 minutes.`;
+    state='ok'; role='ALL GOOD — KEEP MONITORING';
+    title='✅ All Systems Normal';
+    steps=[
+      `Stations: St1 ${(u1*100).toFixed(0)}% · St2 ${(u2*100).toFixed(0)}% · St3 ${(u3*100).toFixed(0)}% — all within safe range`,
+      `Lead time: ${lt.toFixed(3)} days · Kit queue: ${qj} jobs — no immediate action needed`,
+      `Contract ${c} active${c<3&&lt>0&&lt<.5?' — LT is low, consider upgrading contract!':c<2&&lt>0&&lt<.8?' — LT allows Contract 2, consider upgrading':''}`,
+      'Person 5: continue pulling data every ~5 minutes and update the team'
+    ];
   }
 
-  const box = document.getElementById('dec-box');
-  box.className = 'dec-box '+state;
-  document.getElementById('dec-title').textContent = title;
-  document.getElementById('dec-body').textContent = body;
-  document.getElementById('alert-strip').classList.toggle('show', state==='crit');
+  const box=document.getElementById('cmd-box');
+  box.className='cmd-box '+state;
+  document.getElementById('cmd-role').textContent=role;
+  document.getElementById('cmd-title').textContent=title;
+  document.getElementById('cmd-steps').innerHTML=steps.map((s,i)=>
+    `<div class="cmd-step"><div class="cmd-step-n">${i+1}</div><div>${s}</div></div>`
+  ).join('');
+  document.getElementById('alert-bar').classList.toggle('on',state==='crit');
 }
 
 // ══════════════ PARSE DATA ══════════════
 function parseData(){
-  const raw = document.getElementById('paste-ta').value.trim();
-  const msg = document.getElementById('parse-msg');
-  if(!raw){ msg.textContent='⚠️ Nothing to parse.'; return; }
-
-  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
-  const rows = [];
+  const raw=document.getElementById('paste-ta').value.trim();
+  const msg=document.getElementById('pmsg');
+  if(!raw){msg.textContent='⚠️ Nothing pasted.';return;}
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const rows=[];
   for(const line of lines){
-    const cols = line.split('\t');
-    const day = parseFloat(cols[0]);
-    if(!isNaN(day) && day>=1 && day<=500) rows.push(cols.map(v=>v.trim()));
+    const cols=line.split('\t');
+    const day=parseFloat(cols[0]);
+    if(!isNaN(day)&&day>=1&&day<=500) rows.push(cols.map(v=>v.trim()));
   }
   if(!rows.length){
-    msg.textContent='⚠️ No data rows found. Make sure you copy the numeric rows (not the merged header rows) from the Excel file.';
-    return;
+    msg.textContent='⚠️ No data rows found. Select the numeric rows (not merged header rows) from Excel.';
+    msg.style.color='#c0392b'; return;
   }
-
   renderTable(rows);
-
-  // Auto-fill dashboard from last row
-  const last = rows[rows.length-1];
-  const setN = (id,v)=>{ const n=parseFloat(v); if(!isNaN(n)) document.getElementById(id).value=n.toFixed(3); };
+  const last=rows[rows.length-1];
+  const setN=(id,v)=>{const n=parseFloat(v);if(!isNaN(n))document.getElementById(id).value=n.toFixed(3);};
   setN('in-u1',last[6]); setN('in-u2',last[9]); setN('in-u3',last[12]);
   setN('in-lt',last[20]); setN('in-q1',last[5]); setN('in-qj',last[1]);
-  document.getElementById('h-day').value = last[0]||50;
-  const cash = parseFloat(last[23]);
+  document.getElementById('h-day').value=last[0]||50;
+  const cash=parseFloat(last[23]);
   if(!isNaN(cash)){
-    const cs = '$ '+(cash*1000).toLocaleString(undefined,{maximumFractionDigits:0});
-    document.getElementById('h-cash').value = cs;
-    document.getElementById('cash-right').value = cs;
-    document.getElementById('cash-display').textContent = cs;
+    const cs='$ '+(cash*1000).toLocaleString(undefined,{maximumFractionDigits:0});
+    document.getElementById('h-cash').value=cs;
+    document.getElementById('cash-r').value=cs;
+    document.getElementById('cash-disp').textContent=cs;
   }
   onDay(); onMetrics();
-  msg.textContent = `✅ ${rows.length} rows loaded. Dashboard updated from Day ${last[0]}.`;
+  msg.textContent=`✅ ${rows.length} rows loaded — dashboard updated from Day ${last[0]}`;
   msg.style.color='#27ae60';
+  // Auto-switch to dashboard to see the command
+  gv('dash');
 }
 
 function renderTable(rows){
-  document.getElementById('tbl-rows').textContent = `— ${rows.length} rows`;
-  document.getElementById('tbl-lastday').textContent = `Latest: Day ${rows[rows.length-1][0]}`;
-  const uc=v=>v>=.92?'red-cell':v>=.85?'warn-cell':v>0?'good-cell':'';
-  const ltc=v=>v>=5?'red-cell':v>=1?'warn-cell':v>0?'good-cell':'';
-  const qc=v=>v>3?'red-cell':v>0?'warn-cell':'';
+  document.getElementById('tbl-rows').textContent=` — ${rows.length} rows`;
+  document.getElementById('tbl-last').textContent=`Latest: Day ${rows[rows.length-1][0]}`;
+  const uc=v=>v>=.92?'rc':v>=.85?'wc':v>0?'gc':'';
+  const ltc=v=>v>=5?'rc':v>=1?'wc':v>0?'gc':'';
+  const qc=v=>v>3?'rc':v>0?'wc':'';
   const last=rows.length-1;
-  document.getElementById('dtbl-body').innerHTML = rows.map((r,ri)=>{
+  document.getElementById('dtbl').innerHTML=rows.map((r,ri)=>{
     const u1=parseFloat(r[6])||0,u2=parseFloat(r[9])||0,u3=parseFloat(r[12])||0;
     const lt=parseFloat(r[20])||0,qj=parseFloat(r[1])||0;
-    return `<tr class="${ri===last?'last-row':''}">
-      <td><b>${r[0]}</b></td>
-      <td class="${qc(qj)}">${r[1]}</td>
+    return `<tr class="${ri===last?'hi':''}">
+      <td><b>${r[0]}</b></td><td class="${qc(qj)}">${r[1]}</td>
       <td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
-      <td class="${parseFloat(r[5])>2?'warn-cell':''}">${r[5]}</td>
-      <td class="${uc(u1)}">${(u1*100).toFixed(1)}%</td>
-      <td>${r[7]}</td>
-      <td class="${parseFloat(r[8])>2?'warn-cell':''}">${r[8]}</td>
-      <td class="${uc(u2)}">${(u2*100).toFixed(1)}%</td>
-      <td>${r[10]}</td>
-      <td class="${parseFloat(r[11])>2?'warn-cell':''}">${r[11]}</td>
-      <td class="${uc(u3)}">${(u3*100).toFixed(1)}%</td>
-      <td>${r[13]}</td>
+      <td class="${parseFloat(r[5])>2?'wc':''}">${r[5]}</td>
+      <td class="${uc(u1)}">${(u1*100).toFixed(1)}%</td><td>${r[7]}</td>
+      <td class="${parseFloat(r[8])>2?'wc':''}">${r[8]}</td>
+      <td class="${uc(u2)}">${(u2*100).toFixed(1)}%</td><td>${r[10]}</td>
+      <td class="${parseFloat(r[11])>2?'wc':''}">${r[11]}</td>
+      <td class="${uc(u3)}">${(u3*100).toFixed(1)}%</td><td>${r[13]}</td>
       <td>${r[14]}</td><td>${r[15]}</td><td>${r[16]}</td>
       <td>${r[17]}</td><td>${r[18]}</td><td>${r[19]}</td>
       <td class="${ltc(lt)}">${lt.toFixed(3)}</td>
@@ -970,41 +1145,35 @@ function renderTable(rows){
       <td><b>$${parseFloat(r[23]).toFixed(2)}k</b></td>
     </tr>`;
   }).join('');
-  // Scroll to bottom
   const tw=document.querySelector('.tbl-wrap');
-  if(tw) setTimeout(()=>{tw.scrollTop=tw.scrollHeight},80);
+  if(tw) setTimeout(()=>tw.scrollTop=tw.scrollHeight,80);
 }
 
 function clearData(){
   document.getElementById('paste-ta').value='';
-  document.getElementById('dtbl-body').innerHTML='<tr><td colspan="24" style="color:#bbb;padding:20px;text-align:center">Paste data above and click Parse</td></tr>';
-  document.getElementById('tbl-rows').textContent='— no data yet';
-  document.getElementById('tbl-lastday').textContent='';
-  document.getElementById('parse-msg').textContent='';
+  document.getElementById('dtbl').innerHTML='<tr><td colspan="24" style="color:#bbb;padding:18px;text-align:center">Paste data above and click Parse</td></tr>';
+  document.getElementById('tbl-rows').textContent=' — no data yet';
+  document.getElementById('tbl-last').textContent='';
+  document.getElementById('pmsg').textContent='';
 }
 
 // ══════════════ SCOREBOARD ══════════════
 function renderSB(){
+  document.getElementById('sb-usv').textContent=(document.getElementById('h-team').value||'falcons')+' ★';
   const sorted=[...G.teams].sort((a,b)=>b.cash-a.cash);
-  const maxCash=Math.max(...sorted.map(t=>t.cash),1);
-  document.getElementById('sbtbl-body').innerHTML=sorted.map((t,i)=>{
-    const rank=i+1;
-    const rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
-    const barPct=Math.min(100,(t.cash/maxCash)*100);
+  const maxC=Math.max(...sorted.map(t=>t.cash),1);
+  document.getElementById('sbtbl').innerHTML=sorted.map((t,i)=>{
+    const rank=i+1,rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
+    const barPct=Math.min(100,(t.cash/maxC)*100);
     const barCol=t.us?'#d4af37':rank<=3?'#2d7d3a':'#1c3461';
     const cashCol=t.us?'#8a6000':'#155724';
-    return `<tr class="${t.us?'us-row':''}">
-      <td><div class="rank-num ${rc}">${rank}</div></td>
-      <td><input class="t-inp" value="${t.name}" ${t.us?'style="font-weight:800"':''} onchange="updT('${t.id}','name',this.value)"></td>
-      <td><input class="cash-td-inp" type="number" value="${t.cash.toFixed(1)}" style="color:${cashCol}" onchange="updT('${t.id}','cash',parseFloat(this.value)||0)" onfocus="this.select()"> <span style="font-size:9px;color:#999">$k</span></td>
-      <td>
-        <div class="bar-wrap">
-          <div class="c-bar"><div class="c-bar-fill" style="width:${barPct}%;background:${barCol}"></div></div>
-          <span class="c-bar-lbl" style="color:${cashCol}">$${t.cash.toFixed(1)}k</span>
-        </div>
-      </td>
-      <td><input class="t-inp" style="width:190px;font-size:11px;color:#666" value="${t.notes||''}" placeholder="strategy notes..." onchange="updT('${t.id}','notes',this.value)"></td>
-      <td>${t.us?'<span style="color:#d4af37;font-size:14px">★</span>':`<button class="del-btn" onclick="delT('${t.id}')">✕</button>`}</td>
+    return `<tr class="${t.us?'us':''}">
+      <td><div class="rb ${rc}">${rank}</div></td>
+      <td><input class="ti" value="${t.name}" ${t.us?'style="font-weight:800"':''} onchange="updT('${t.id}','name',this.value)"></td>
+      <td><input class="ci" type="number" value="${t.cash.toFixed(1)}" style="color:${cashCol}" onchange="updT('${t.id}','cash',parseFloat(this.value)||0)" onfocus="this.select()"> <span style="font-size:9px;color:#999">$k</span></td>
+      <td><div class="bar-w"><div class="cb"><div class="cbf" style="width:${barPct}%;background:${barCol}"></div></div><span class="cbv" style="color:${cashCol}">$${t.cash.toFixed(1)}k</span></div></td>
+      <td><input class="ti" style="width:180px;font-size:11px;color:#666" value="${t.notes||''}" placeholder="strategy notes..." onchange="updT('${t.id}','notes',this.value)"></td>
+      <td>${t.us?'<span style="color:#d4af37;font-size:13px">★</span>':`<button class="del-b" onclick="delT('${t.id}')">✕</button>`}</td>
     </tr>`;
   }).join('');
 }
@@ -1017,16 +1186,14 @@ function addTeam(){
   const cash=parseFloat(document.getElementById('af-cash').value)||0;
   const us=document.getElementById('af-us').value==='us';
   if(!name) return;
-  G.teams.push({id:'t'+(G.nextId++),name,cash,us,notes:''});
-  document.getElementById('af-name').value='';
-  document.getElementById('af-cash').value='';
+  G.teams.push({id:'t'+(G.nid++),name,cash,us,notes:''});
+  ['af-name','af-cash'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('af-us').value='';
   hideAdd(); renderSB();
 }
 
 // ══════════════ INIT ══════════════
-onDay();
-renderSB();
+onDay(); renderSB();
 </script>
 </body>
 </html>
