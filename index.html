@@ -321,6 +321,25 @@ input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:#ddd}
 ::-webkit-scrollbar-thumb{background:#a0aabb;border-radius:3px}
+
+/* ── ROLE CHECKLISTS ── */
+
+/* ── DATA CHECKLIST ── */
+.data-checklist{background:#fff;border:1.5px solid #d0d5e5;border-radius:9px;padding:10px 14px;flex-shrink:0}
+.dc-title{font-size:12px;font-weight:700;color:#1c3461;margin-bottom:9px;border-bottom:1px solid #e0e4ee;padding-bottom:5px}
+.dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px}
+.dc-col{background:#f7f8fc;border-radius:5px;padding:7px 9px}
+.dc-role{font-size:10px;font-weight:700;color:#222;margin-bottom:4px}
+.dc-item{font-size:10px;color:#444;line-height:1.45;padding:1px 0}
+
+.role-checklist{margin-top:10px;background:#f5f7fb;border:1px solid #d8dde8;border-radius:6px;padding:8px 10px}
+.rcl-title{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#1c3461;margin-bottom:6px;border-bottom:1px solid #d0d6e5;padding-bottom:4px}
+.rc-item{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;line-height:1.4;color:#333;padding:2px 0}
+.rc-n{background:#1c3461;color:#fff;border-radius:3px;padding:1px 5px;font-size:8px;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap}
+.rc-item.rc-day .rc-n{background:#7b2fbe}
+/* wider cards for checklists */
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.role-card{background:#fff;border-radius:10px;overflow:hidden;border:2px solid #e0e4ee}
 </style>
 </head>
 <body>
@@ -405,9 +424,16 @@ input[type=number]{-moz-appearance:textfield}
       <div class="sc-h"><span>MATERIAL</span><span class="sc-ext">↗</span></div>
       <div class="sc-b">
         <div class="flask">🧪</div>
-        <div class="mr"><span class="ml">ROP</span><input class="mi glow" id="v-rop" type="number" value="24" oninput="calcKit()"><span class="mu">Kits</span></div>
-        <div class="mr"><span class="ml">Quantity</span><input class="mi glow" id="v-qty" type="number" value="120" oninput="calcKit()"><span class="mu">Kits</span></div>
+        <div class="mr"><span class="ml">ROP</span><input class="mi glow" id="v-rop" type="number" value="24" oninput="calcKit()" title="Reorder Point — enter as whole number. Day 51: set to 36. Day ~85: set to 43. Day ~110: set to 55."><span class="mu">Kits</span></div>
+        <div class="mr"><span class="ml">Quantity</span><input class="mi glow" id="v-qty" type="number" value="120" oninput="calcKit()" title="Order Quantity — keep at 120 until Day ~210. Then set to cover remaining demand minus on-hand."><span class="mu">Kits</span></div>
         <div class="mwarn">⚠️ Change ONE parameter per edit only</div>
+        <div class="minfo" style="background:#e8f0fc;border:1px solid #b0c4e8;border-radius:3px;padding:3px 5px;margin-top:4px;font-size:9px;color:#1c3461">
+          <b>ROP schedule:</b><br>
+          Day 51 → <b>36</b><br>
+          Day ~85 → <b>43</b><br>
+          Day ~110 → <b>55</b><br>
+          Day ~217 → set <b>Q=0</b>
+        </div>
         <div class="minfo">Order cost: <b id="kit-cost">$73,000</b><br>Days left: <b id="days-left" style="color:var(--navy)">218</b></div>
       </div>
       <div class="sc-nav"><div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div></div><span>Click to next</span></div>
@@ -560,7 +586,7 @@ input[type=number]{-moz-appearance:textfield}
       <div style="padding:9px;text-align:center">
         <div style="font-size:28px;margin:3px 0">💰</div>
         <input class="cash-inp glow" id="cash-r" placeholder="$ —" oninput="syncCash(this.value)">
-        <div style="font-size:9px;color:#999;margin-top:3px">Updated each sim day</div>
+        <div style="font-size:9px;color:#888;margin-top:3px">P1 updates after each data paste<br><span style="color:#2d7d3a;font-weight:700">Target: maximize by Day 268</span></div>
       </div>
       <div class="sc-nav"><div class="dots"><div class="dot on"></div><div class="dot"></div></div><span>Click to next</span></div>
     </div>
@@ -576,7 +602,7 @@ input[type=number]{-moz-appearance:textfield}
         <div><label class="mg-lbl">St1 Queue (jobs)</label><input class="mg-i" id="in-q1" type="number" step=".1" min="0" placeholder="0" oninput="onMetrics()"></div>
         <div><label class="mg-lbl">Kit Queue (jobs)</label><input class="mg-i" id="in-qj" type="number" step="1" min="0" placeholder="0" oninput="onMetrics()"></div>
       </div>
-      <div class="met-hint">⬆ Auto-filled when you paste Daily Data</div>
+      <div class="met-hint">⬆ Auto-filled when you paste Daily Data<br><b>P2 enters Util fields · P3 enters Lead Time · P4 enters Kit Queue</b></div>
     </div>
 
     <!-- FINISHED ORDERS -->
@@ -597,105 +623,173 @@ input[type=number]{-moz-appearance:textfield}
 <div class="view" id="view-roles">
 <div class="roles-view">
   <div class="roles-title">👥 Team Roles — 5 People, One Goal: Maximize Final Cash</div>
-  <div class="roles-sub">Each person owns their domain. Paste data every ~5 minutes and everyone acts on their role's command.</div>
+  <div class="roles-sub">Each person owns their domain. <b>Person 5 pastes data every ~5 min</b>, then everyone runs their post-paste checklist below.</div>
   <div class="roles-grid">
 
+    <!-- PERSON 1 -->
     <div class="role-card">
       <div class="role-hdr" style="background:#1c3461"><span class="role-ico">👑</span><span>Person 1</span><span class="role-num">COMMANDER</span></div>
       <div class="role-body">
         <div class="role-name">Role</div>
         <div class="role-title">Commander — Final Decision Authority</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico">📋</span><span>Reads the Command Box and announces the current priority action to the team</span></div>
-          <div class="rt"><span class="rt-ico">✅</span><span>Approves ALL purchases (machines, kits) before anyone clicks anything</span></div>
-          <div class="rt"><span class="rt-ico">📣</span><span>Calls out contract upgrades/downgrades — says "switch now" or "hold"</span></div>
-          <div class="rt"><span class="rt-ico">💰</span><span>Tracks cash balance and approves spending vs. the $1M+ target</span></div>
-          <div class="rt"><span class="rt-ico">🔚</span><span>Manages end-game wind-down: sells machines Day 180+, cuts kits Day 190+</span></div>
+          <div class="rt"><span class="rt-ico">📋</span><span>Reads the <b>Command Box</b> on Dashboard every data paste — announces priority action</span></div>
+          <div class="rt"><span class="rt-ico">✅</span><span>Approves ALL purchases (machines + kits) before anyone clicks. Check cash first.</span></div>
+          <div class="rt"><span class="rt-ico">📣</span><span>Contract decisions: says <b>"switch now"</b> or <b>"hold"</b> — never both people deciding</span></div>
+          <div class="rt"><span class="rt-ico">💰</span><span>Track cash in <b>top bar Cash Balance field</b> (gold-highlighted) after each data paste</span></div>
+          <div class="rt"><span class="rt-ico">🔚</span><span><b>Day ~217:</b> confirm P4 has set Q=0 and on-hand + in-transit ≥ 605 kits before lock</span></div>
         </div>
-        <span class="role-freq freq-cont">⚡ Continuous — every data paste</span>
+        <div class="role-checklist">
+          <div class="rcl-title">⚡ POST-PASTE CHECKLIST (every data pull)</div>
+          <div class="rc-item"><span class="rc-n">1</span>Read Command Box → what color? what action?</div>
+          <div class="rc-item"><span class="rc-n">2</span>Check cash vs. next planned spend (next machine ~$90-100k)</div>
+          <div class="rc-item"><span class="rc-n">3</span>Confirm no one clicked anything without approval</div>
+          <div class="rc-item rc-day"><span class="rc-n">D51</span>Approve in order: <b>(1) buy S1 #2 → (2) ROP→36 → (3) pri4 → (4) Contract 2</b></div>
+          <div class="rc-item rc-day"><span class="rc-n">D~85</span>Approve: buy S3 #2 ($100k) + set ROP→43</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~105</span>Approve: buy S1 #3 ($90k) + set ROP→55 (~Day 110)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~130</span>P3 reports: avg LT &lt; 0.3d for 10+ days AND all util &lt; 75%? → approve Contract 3</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~217</span>Lock: Q=0, confirm ≥605 kits. DO NOT change anything after this.</div>
+        </div>
+        <span class="role-freq freq-cont">⚡ Every data paste — you run the Command Box</span>
       </div>
     </div>
 
+    <!-- PERSON 2 -->
     <div class="role-card">
       <div class="role-hdr" style="background:#2d7d3a"><span class="role-ico">🏭</span><span>Person 2</span><span class="role-num">STATION MONITOR</span></div>
       <div class="role-body">
         <div class="role-name">Role</div>
         <div class="role-title">Station Monitor — Bottleneck Hunter</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico">📊</span><span>Watches St1, St2, St3 utilization — enters them into the ⭐ Live Metrics panel</span></div>
-          <div class="rt"><span class="rt-ico">🚨</span><span>If any station hits ≥92% util, immediately tells Commander: "Station X is red, buy now"</span></div>
-          <div class="rt"><span class="rt-ico">⚠️</span><span>If ≥85% and trending up over 2 data pulls, warns Commander to prepare purchase</span></div>
-          <div class="rt"><span class="rt-ico">➕</span><span>On Commander approval: clicks the + button to buy a machine on the correct station</span></div>
-          <div class="rt"><span class="rt-ico">💸</span><span>Day 180+: Sells machines on any station below 55% util (click − button)</span></div>
+          <div class="rt"><span class="rt-ico">📊</span><span>Read St1/St2/St3 Utilization from data → enter into <b>⭐ Live Metrics panel</b> (3 gold fields)</span></div>
+          <div class="rt"><span class="rt-ico">📊</span><span>Read St1 Queue from data → enter into <b>St1 Queue field</b> in Live Metrics</span></div>
+          <div class="rt"><span class="rt-ico">🚨</span><span>Any station ≥92%: tell Commander <b>"Station X is red — buy now"</b></span></div>
+          <div class="rt"><span class="rt-ico">⚠️</span><span>Any station ≥85% and rising over 2+ pulls: warn Commander to pre-approve</span></div>
+          <div class="rt"><span class="rt-ico">➕</span><span>After Commander approves: click <b>+</b> button on correct station in the lab</span></div>
         </div>
-        <span class="role-freq freq-check">👁 Every data pull — compare to last pull</span>
+        <div class="role-checklist">
+          <div class="rcl-title">⚡ POST-PASTE CHECKLIST (every data pull)</div>
+          <div class="rc-item"><span class="rc-n">1</span>Enter St1 Util → St2 Util → St3 Util into ⭐ Live Metrics (auto-fills if data was pasted)</div>
+          <div class="rc-item"><span class="rc-n">2</span>Enter St1 Queue jobs into ⭐ St1 Queue field</div>
+          <div class="rc-item"><span class="rc-n">3</span>Compare to previous pull: rising? flat? falling?</div>
+          <div class="rc-item"><span class="rc-n">4</span>St1 ≥ 85% AND trending up? → tell Commander "S1 approaching red"</div>
+          <div class="rc-item"><span class="rc-n">5</span>St3 ≥ 75% near Day 80? → flag "S3 will hit cap by Day 96 — plan buy"</div>
+          <div class="rc-item rc-day"><span class="rc-n">D51</span>Immediately: click <b>+ on Station 1</b> (after Commander approves)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~85</span>When Commander says go: click <b>+ on Station 3</b> ($100k)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~105</span>When Commander says go: click <b>+ on Station 1 again</b> ($90k, 3rd machine)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D217+</span>Do NOT sell machines — all stations still needed for final 50 days</div>
+        </div>
+        <span class="role-freq freq-check">👁 Every data pull — utilizations are your signal</span>
       </div>
     </div>
 
+    <!-- PERSON 3 -->
     <div class="role-card">
       <div class="role-hdr" style="background:#c0392b"><span class="role-ico">📄</span><span>Person 3</span><span class="role-num">CONTRACT MANAGER</span></div>
       <div class="role-body">
         <div class="role-name">Role</div>
         <div class="role-title">Contract Manager — Revenue Optimizer</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico">📈</span><span>Monitors Avg Lead Time — enters it into the ⭐ panel and watches revenue pills</span></div>
-          <div class="rt"><span class="rt-ico">🚀</span><span>LT &lt; 0.5 days and on C1 or C2: tell Commander "ready for Contract 3 upgrade"</span></div>
-          <div class="rt"><span class="rt-ico">⬆️</span><span>LT &lt; 1.0 day and on C1: tell Commander "ready for Contract 2 upgrade"</span></div>
-          <div class="rt"><span class="rt-ico">🔴</span><span>LT exceeds contract limit: immediately alert Commander "downgrade NOW, losing money"</span></div>
-          <div class="rt"><span class="rt-ico">🔬</span><span>Also manages Station 2 priority: switch to "Pri Step 4" when St2 queue is building</span></div>
+          <div class="rt"><span class="rt-ico">📈</span><span>Read Avg Lead Time from data → enter into <b>⭐ Avg Lead Time field</b> (gold field)</span></div>
+          <div class="rt"><span class="rt-ico">🔢</span><span>Watch the Revenue pills update — which contract earns most right now?</span></div>
+          <div class="rt"><span class="rt-ico">🚀</span><span>LT &lt; 0.3d for <b>10+ consecutive days</b> AND all util &lt; 75%: tell Commander "ready for C3"</span></div>
+          <div class="rt"><span class="rt-ico">🔴</span><span>LT exceeds quoted limit: immediately alert Commander <b>"downgrade NOW"</b></span></div>
+          <div class="rt"><span class="rt-ico">🔬</span><span>Also manages S2 priority — switch to <b>pri4 on Day 51</b>, revert to FIFO only if jobs cap approaches</span></div>
         </div>
-        <span class="role-freq freq-check">👁 Every data pull — LT is the key metric</span>
+        <div class="role-checklist">
+          <div class="rcl-title">⚡ POST-PASTE CHECKLIST (every data pull)</div>
+          <div class="rc-item"><span class="rc-n">1</span>Enter Avg Lead Time into ⭐ Live Metrics (auto-fills if data pasted)</div>
+          <div class="rc-item"><span class="rc-n">2</span>Check revenue pills: is current contract still optimal?</div>
+          <div class="rc-item"><span class="rc-n">3</span>On Contract 2: LT &lt; 0.3d today? Start your 10-day counter</div>
+          <div class="rc-item"><span class="rc-n">4</span>LT breaching? (C2: LT &gt;1d, C3: LT &gt;0.5d) → alert Commander immediately</div>
+          <div class="rc-item"><span class="rc-n">5</span>Check S2 priority — should be pri4. If WIP near 100-job cap, consider switching to FIFO temporarily.</div>
+          <div class="rc-item rc-day"><span class="rc-n">D51</span>Click <b>Pri Step 4</b> button on Station 2 after Commander approval</div>
+          <div class="rc-item rc-day"><span class="rc-n">D51</span>Switch Orders dropdown to <b>Contract 2</b> (~30-60s after S1 machine + ROP done)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~130</span>10-day LT &lt; 0.3d + all util &lt; 75% → report to Commander, switch to Contract 3</div>
+          <div class="rc-item rc-day"><span class="rc-n">D&lt;218</span>If LT volatile: downgrade to safer contract before lock</div>
+        </div>
+        <span class="role-freq freq-check">👁 Every data pull — LT is your signal</span>
       </div>
     </div>
 
+    <!-- PERSON 4 -->
     <div class="role-card">
       <div class="role-hdr" style="background:#b06012"><span class="role-ico">📦</span><span>Person 4</span><span class="role-num">INVENTORY MANAGER</span></div>
       <div class="role-body">
         <div class="role-name">Role</div>
         <div class="role-title">Inventory Manager — Kit Supply Chain</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico">📦</span><span>Monitors "kits 1" queue — enters Kit Queue into ⭐ panel</span></div>
-          <div class="rt"><span class="rt-ico">🚨</span><span>If Kit Queue &gt; 3 jobs: immediately alert Commander "kits starving — raise ROP now"</span></div>
-          <div class="rt"><span class="rt-ico">⚙️</span><span>On Commander approval: updates ROP or Quantity in the Material panel (ONE change only)</span></div>
-          <div class="rt"><span class="rt-ico">🔚</span><span>Day 190+: gradually reduce Order Qty each session to avoid holding dead stock at Day 268</span></div>
-          <div class="rt"><span class="rt-ico">💡</span><span>Rule of thumb: ROP = 2× daily demand. Qty = enough to last until next order arrives (4 days)</span></div>
+          <div class="rt"><span class="rt-ico">📦</span><span>Read "kits 1" (queued jobs waiting for kits) → enter into <b>⭐ Kit Queue field</b></span></div>
+          <div class="rt"><span class="rt-ico">🚨</span><span>Kit Queue &gt; 3: alert Commander <b>"kits starving"</b> — change ROP immediately</span></div>
+          <div class="rt"><span class="rt-ico">⚙️</span><span>Update <b>ROP field</b> in Material panel on schedule. ONE change per edit session only.</span></div>
+          <div class="rt"><span class="rt-ico">🔢</span><span>ROP formula: D × 4 + 7.6 (safety stock). Qty stays 120 until endgame.</span></div>
+          <div class="rt"><span class="rt-ico">🔚</span><span><b>Day ~210:</b> compute remaining demand − on-hand − in-transit. Set Q to cover shortfall.</span></div>
         </div>
-        <span class="role-freq freq-watch">📦 Watch kits queue every pull</span>
+        <div class="role-checklist">
+          <div class="rcl-title">⚡ POST-PASTE CHECKLIST (every data pull)</div>
+          <div class="rc-item"><span class="rc-n">1</span>Enter Kit Queue into ⭐ Live Metrics (auto-fills if data pasted)</div>
+          <div class="rc-item"><span class="rc-n">2</span>Kit Queue &gt; 0? Watch closely. Kit Queue &gt; 3? Alert Commander now.</div>
+          <div class="rc-item"><span class="rc-n">3</span>Is current ROP correct for today's demand? (check ROP schedule below)</div>
+          <div class="rc-item"><span class="rc-n">4</span>Never change both ROP and Qty in the same edit session</div>
+          <div class="rc-item rc-day"><span class="rc-n">D51</span>Set <b>ROP → 36</b> in Material panel (demand 5.7×4 + safety = 30.4 → round up)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~85</span>Set <b>ROP → 43</b> (demand 8.7×4 + 7.6 = 42.4)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~110</span>Set <b>ROP → 55</b> (plateau: 11.7×4 + 7.6 = 54.4)</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~210</span>Compute final order: need ~605 kits by Day 214. Set Q to cover gap.</div>
+          <div class="rc-item rc-day"><span class="rc-n">D~217</span>Set <b>Q → 0</b> after confirming ≥605 kits on-hand + in-transit</div>
+        </div>
+        <span class="role-freq freq-watch">📦 Watch Kit Queue every pull — stockout = immediate revenue loss</span>
       </div>
     </div>
 
+    <!-- PERSON 5 -->
     <div class="role-card">
       <div class="role-hdr" style="background:#7b2fbe"><span class="role-ico">💻</span><span>Person 5</span><span class="role-num">DATA ANALYST</span></div>
       <div class="role-body">
         <div class="role-name">Role</div>
-        <div class="role-title">Data Analyst — Eyes &amp; Ears</div>
+        <div class="role-title">Data Analyst — Eyes &amp; Eyes</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico">⬇️</span><span>Every ~5 minutes: download Consolidated Daily Data from Littlefield</span></div>
-          <div class="rt"><span class="rt-ico">📋</span><span>Copy ALL data rows → paste into Daily Data tab → click Parse (dashboard auto-updates)</span></div>
-          <div class="rt"><span class="rt-ico">📣</span><span>Announces: "Day X data loaded — [summary of key metrics]" to the team</span></div>
-          <div class="rt"><span class="rt-ico">📊</span><span>Watches trends: is utilization rising? Is LT creeping up? Flags changes to Commander</span></div>
-          <div class="rt"><span class="rt-ico">🏆</span><span>Updates Scoreboard tab with competitor cash balances to track our ranking</span></div>
+          <div class="rt"><span class="rt-ico">⬇️</span><span>Every ~5 real minutes: download <b>Consolidated Daily Data</b> from Littlefield</span></div>
+          <div class="rt"><span class="rt-ico">📋</span><span>Select ALL numeric rows in Excel (not headers) → Ctrl+C → paste into <b>Daily Data tab</b> → click Parse</span></div>
+          <div class="rt"><span class="rt-ico">📣</span><span>Announce: <b>"Day X loaded — S1: XX%, S2: XX%, S3: XX%, LT: 0.XXd, Cash: $XXXk"</b></span></div>
+          <div class="rt"><span class="rt-ico">📈</span><span>Watch trends: utilization rising over 3+ pulls? LT creeping up? Flag to Commander.</span></div>
+          <div class="rt"><span class="rt-ico">🏆</span><span>Update Scoreboard tab with competitor cash balances each pull</span></div>
         </div>
-        <span class="role-freq freq-when">⏱ Every 5 minutes — set a timer</span>
+        <div class="role-checklist">
+          <div class="rcl-title">⚡ EVERY ~5 MINUTES: DO THIS EXACT SEQUENCE</div>
+          <div class="rc-item"><span class="rc-n">1</span>In Littlefield: click <b>"Consolidated Daily Data"</b> in sidebar → Download the Excel file</div>
+          <div class="rc-item"><span class="rc-n">2</span>Open Excel → Select rows 3 to bottom (skip the 2 merged header rows) → <b>Ctrl+A then Ctrl+C</b></div>
+          <div class="rc-item"><span class="rc-n">3</span>Switch to this tool → click <b>"📋 Daily Data" tab</b> → click in the paste area → <b>Ctrl+V</b></div>
+          <div class="rc-item"><span class="rc-n">4</span>Click <b>"⚡ Parse &amp; Update Dashboard"</b> — dashboard auto-updates and shows Command Box</div>
+          <div class="rc-item"><span class="rc-n">5</span>Announce the key numbers to the team (Day, utilizations, LT, cash)</div>
+          <div class="rc-item"><span class="rc-n">6</span>Go to Scoreboard tab → update competitor cash balances</div>
+          <div class="rc-item rc-day"><span class="rc-n">WHAT TO CHECK IN DATA TABLE</span></div>
+          <div class="rc-item">→ <b>St1/St2/St3 Util columns</b>: any red (≥92%) or orange (≥85%)?</div>
+          <div class="rc-item">→ <b>LT column</b>: above 1.0d on Contract 2 or 0.5d on Contract 3 = alert P3</div>
+          <div class="rc-item">→ <b>Queued column</b>: rising means demand surge or bottleneck forming</div>
+          <div class="rc-item">→ <b>Cash column</b>: trending up? good. flat or falling? something is wrong.</div>
+        </div>
+        <span class="role-freq freq-when">⏱ Set a real timer — every 5 minutes without fail</span>
       </div>
     </div>
 
-    <!-- Quick Reference Card -->
+    <!-- QUICK REFERENCE -->
     <div class="role-card" style="border-color:var(--gold)">
       <div class="role-hdr" style="background:#8a6000"><span class="role-ico">⚡</span><span>Quick Reference</span><span class="role-num">ALL ROLES</span></div>
       <div class="role-body">
-        <div class="role-name">Decision Thresholds</div>
-        <div class="role-title">Know These Numbers Cold</div>
+        <div class="role-name">Decision Thresholds — Know These Cold</div>
+        <div class="role-title">Numbers That Trigger Action</div>
         <div class="role-tasks">
-          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Util ≥ 92%</b> → Buy machine immediately (crit)</span></div>
-          <div class="rt"><span class="rt-ico" style="color:var(--warn)">🟠</span><span><b>Util ≥ 85%</b> → Prepare to buy, watch next pull</span></div>
-          <div class="rt"><span class="rt-ico" style="color:var(--ok)">🟢</span><span><b>LT &lt; 0.5d</b> → Upgrade to Contract 3 ($1,250)</span></div>
-          <div class="rt"><span class="rt-ico" style="color:var(--ok)">🟢</span><span><b>LT &lt; 1.0d</b> → Upgrade to Contract 2 ($1,000)</span></div>
-          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Kit queue &gt; 3</b> → Raise ROP (revenue loss every second)</span></div>
-          <div class="rt"><span class="rt-ico">💡</span><span><b>ONE change at a time</b> in Material panel (ROP or Qty, never both)</span></div>
-          <div class="rt"><span class="rt-ico">🏁</span><span><b>Day 180</b> → Sell low-util machines. <b>Day 190</b> → Cut kit qty</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Util ≥ 92%</b> → Buy machine NOW (no waiting)</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--warn)">🟠</span><span><b>Util ≥ 85%</b> trending up → Prepare to buy next pull</span></div>
+          <div class="rt"><span class="rt-ico" style="color:#2080e0">🔵</span><span><b>LT &lt; 0.3d for 10+ days</b> + all util &lt; 75% → Consider Contract 3</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--ok)">🟢</span><span>Contract 2: stays good as long as LT &lt; 1.0 days</span></div>
+          <div class="rt"><span class="rt-ico" style="color:var(--crit)">🔴</span><span><b>Kit Queue &gt; 3</b> → Raise ROP immediately (revenue bleeding)</span></div>
+          <div class="rt"><span class="rt-ico">📅</span><span><b>ROP schedule:</b> Day 51→36 / Day ~85→43 / Day ~110→55</span></div>
+          <div class="rt"><span class="rt-ico">💡</span><span><b>ONE change at a time</b> — ROP or Qty, never both in one edit</span></div>
+          <div class="rt"><span class="rt-ico">🔒</span><span><b>Day ~217:</b> Q→0, verify ≥605 kits, lock everything</span></div>
         </div>
-        <span class="role-freq freq-cont">Machine costs: St1=$90k · St2=$80k · St3=$100k</span>
+        <div style="margin-top:8px;font-size:9px;font-weight:700;color:#666;border-top:1px solid #eee;padding-top:6px">MACHINE COSTS: S1=$90k·buy / $10k·sell &nbsp;|&nbsp; S2=$80k·buy / $10k·sell &nbsp;|&nbsp; S3=$100k·buy / $10k·sell</div>
+        <div style="margin-top:4px;font-size:9px;color:#888">KITS: cost $1,000 + Qty×$600 per order · lead time = 4 sim days · only 1 order in-transit at a time</div>
       </div>
     </div>
 
@@ -707,14 +801,49 @@ input[type=number]{-moz-appearance:textfield}
 <div class="view" id="view-data">
 <div class="data-view">
   <div class="banner">
-    <h3>📋 Consolidated Daily Data — Paste from Littlefield (Person 5 does this every ~5 min)</h3>
-    <p>Copy your downloaded Excel data and paste below. Dashboard and Command Box auto-update instantly.</p>
+    <h3>📋 Person 5 — Paste Consolidated Daily Data here every ~5 real minutes</h3>
+    <p>After pasting and clicking Parse, the dashboard auto-updates and the Command Box shows what to do next. Then announce the key numbers to the team.</p>
     <div class="steps-row">
-      <div class="sp2"><div class="spn">1</div>Littlefield → "Consolidated Daily Data"</div>
-      <div class="sp2"><div class="spn">2</div>Download → open Excel file</div>
-      <div class="sp2"><div class="spn">3</div>Select ALL numeric rows (not header rows)</div>
-      <div class="sp2"><div class="spn">4</div>Ctrl+C → click below → Ctrl+V</div>
-      <div class="sp2 g"><div class="spn">5</div>Click Parse → whole dashboard updates!</div>
+      <div class="sp2"><div class="spn">1</div>Littlefield sidebar → click <b>"Consolidated Daily Data"</b></div>
+      <div class="sp2"><div class="spn">2</div>Download the file → open in Excel</div>
+      <div class="sp2"><div class="spn">3</div>In Excel: skip 2 merged header rows → select ALL data rows → Ctrl+C</div>
+      <div class="sp2"><div class="spn">4</div>Click in the box below → Ctrl+V to paste</div>
+      <div class="sp2 g"><div class="spn">5</div>Click "Parse" → dashboard updates + go check Command Box!</div>
+    </div>
+  </div>
+  <div class="data-checklist">
+    <div class="dc-title">📊 After Parsing — What Each Role Checks in the Table</div>
+    <div class="dc-grid">
+      <div class="dc-col" style="border-left:3px solid #2d7d3a">
+        <div class="dc-role">👑 P1 Commander</div>
+        <div class="dc-item">→ Read Command Box on Dashboard for action</div>
+        <div class="dc-item">→ Check <b>Cash column</b> (last row) — trending up?</div>
+        <div class="dc-item">→ Approve or hold any pending purchases</div>
+      </div>
+      <div class="dc-col" style="border-left:3px solid #2d7d3a">
+        <div class="dc-role">🏭 P2 Station Monitor</div>
+        <div class="dc-item">→ <b>St1 Util / St2 Util / St3 Util columns</b> — red or orange?</div>
+        <div class="dc-item">→ <b>St1 Queue column</b> — rising fast?</div>
+        <div class="dc-item">→ Compare to 2 pulls ago — trend up or down?</div>
+      </div>
+      <div class="dc-col" style="border-left:3px solid #c0392b">
+        <div class="dc-role">📄 P3 Contract Manager</div>
+        <div class="dc-item">→ <b>LT column (C1/C2/C3)</b> — which is active, is it in bounds?</div>
+        <div class="dc-item">→ LT &lt; 0.3d for 10+ consecutive days? → report to P1</div>
+        <div class="dc-item">→ LT creeping up? → warn Commander before it breaches</div>
+      </div>
+      <div class="dc-col" style="border-left:3px solid #b06012">
+        <div class="dc-role">📦 P4 Inventory Manager</div>
+        <div class="dc-item">→ <b>Queued column</b> (kits 1 = jobs waiting for kits)</div>
+        <div class="dc-item">→ &gt;0 → watch. &gt;3 → alert Commander immediately</div>
+        <div class="dc-item">→ Day ~210: compute final order, place by Day 214</div>
+      </div>
+      <div class="dc-col" style="border-left:3px solid #7b2fbe">
+        <div class="dc-role">💻 P5 Data Analyst</div>
+        <div class="dc-item">→ After parsing: <b>announce Day, all utils, LT, cash</b></div>
+        <div class="dc-item">→ Flag any red/orange cells to the team immediately</div>
+        <div class="dc-item">→ Update Scoreboard with competitor cash balances</div>
+      </div>
     </div>
   </div>
   <textarea class="paste-ta" id="paste-ta" placeholder="Paste Littlefield tab-separated data here...&#10;&#10;Expected columns (24 total, tab-separated):&#10;Days · Queued jobs · Jobs accepted 1/2/3 · kits 1 · Utilization 1 · Avg Machine 1 · kits 2 · Utilization 2 · Avg Machine 2 · kits 3 · Utilization 3 · Avg Machine 3 · Jobs out 1/2/3 · Revenue 1/2/3 · Lead time 1/2/3 · Cash balance"></textarea>
@@ -1002,24 +1131,25 @@ function decide(){
       'Station 3 is last step — bottleneck here means completed jobs are delayed at the end',
       'Do NOT buy yet — confirm trend first'
     ];
-  } else if(lt>0&&lt<.4&&c<3&&day<200){
+  } else if(lt>0&&lt<.3&&c<3&&day>120&&day<200){
     state='ok'; role='PERSON 3 — CONTRACT MANAGER';
-    title='🚀 UPGRADE TO CONTRACT 3 NOW — $1,250 per job!';
+    title='🚀 CONSIDER CONTRACT 3 — LT below 0.3d, machines in place';
     steps=[
-      `Lead time is ${lt.toFixed(3)} days — well below the 0.5d threshold for Contract 3`,
-      'This earns $500 MORE per job vs Contract 1, and $250 more vs Contract 2',
-      'Tell Commander: "Ready to switch to Contract 3 — LT is clear"',
-      'Commander approves → Person 3: change the Orders dropdown to "Contract 3 — $1,250"'
+      `Lead time ${lt.toFixed(3)}d is below 0.3d threshold — but only upgrade if this has held for 10+ consecutive days`,
+      'Also confirm: all station utilizations are below 75% AND all 3 planned machines are purchased',
+      'Tell Commander: "C3 candidate — LT clear, util clear, confirm 10-day streak"',
+      'Commander approves → Person 3: change Orders dropdown to "Contract 3 — $1,250"',
+      '⚠️ If LT rises above 0.35d after switch, downgrade back to Contract 2 immediately'
     ];
-  } else if(lt>0&&lt<.8&&c<2&&day<200){
+  } else if(lt>0&&lt<.9&&c<2&&day<200){
     state='ok'; role='PERSON 3 — CONTRACT MANAGER';
-    title='⬆️ UPGRADE TO CONTRACT 2 — $1,000 per job';
+    title='⬆️ SWITCH TO CONTRACT 2 NOW — $1,000 per job (+$250 per job)';
     steps=[
-      `Lead time is ${lt.toFixed(3)} days — below the 1.0d threshold for Contract 2`,
-      'This earns $250 MORE per job vs Contract 1 — meaningful over 168 days',
-      'Tell Commander: "Ready for Contract 2 upgrade — LT is clear"',
-      'Commander approves → Person 3: change the Orders dropdown to "Contract 2 — $1,000"',
-      'Then watch closely: if LT rises above 1.0d after upgrade, downgrade immediately'
+      `Lead time ${lt.toFixed(3)}d — well under Contract 2's 1.0d quoted threshold (16 hrs of slack)`,
+      'This switch earns ~$305k more than staying on C1 after machine costs — do this as soon as possible',
+      'Tell Commander: "LT clear — approve Contract 2 switch"',
+      'Commander approves → Person 3: change Orders dropdown to Contract 2 ($1,000)',
+      'After switching: watch LT closely. If LT drifts above 0.9d, alert Commander immediately'
     ];
   } else if(lt>0&&lt>(c===3?.5:c===2?1:7)){
     state='crit'; role='PERSON 3 — CONTRACT MANAGER';
@@ -1033,43 +1163,44 @@ function decide(){
     ];
   } else if(day>=180&&(u1||u2||u3)){
     const utils=[u1,u2,u3].map((u,i)=>u>0?{s:i+1,u}:null).filter(Boolean);
-    const low=utils.filter(x=>x.u<.55);
+    const low=utils.filter(x=>x.u<.8&&day<218);
     if(low.length){
       state='warn'; role='PERSON 2 — STATION MONITOR + COMMANDER';
-      title=`💰 SELL MACHINES ON STATION${low.map(x=>` ${x.s}`).join(',')} — Day ${day}`;
+      title=`💰 COULD SELL MACHINES — Station${low.map(x=>` ${x.s}`).join(',')} below 80% util`;
       steps=[
-        `Day ${day}: Demand has peaked. ${low.map(x=>`Station ${x.s} only ${(x.u*100).toFixed(0)}% utilized`).join(', ')}`,
-        'Machines sitting idle are worth $0 at Day 268. Sell them now for $10,000 each',
-        'Commander: calculate how many to sell (keep ≥1 per station, keep util below 85%)',
-        'Person 2: click − on the low-util station machine counts after Commander approves'
+        `Day ${day}: ${low.map(x=>`Station ${x.s} at ${(x.u*100).toFixed(0)}%`).join(', ')} — below 80% threshold`,
+        'Strategy says: only sell if removing 1 machine keeps station util below 80% AND we are before Day 218',
+        'Given our utilization projections at peak demand, we likely do NOT sell — machines still needed',
+        'Commander: assess whether demand has truly plateaued. If util stays low for 3+ pulls AND day < 218, consider selling'
       ];
     } else {
-      state='ok'; role='COMMANDER';
+      state='ok'; role='COMMANDER + PERSON 4 — INVENTORY';
       title=`✅ End-game phase — Day ${day} of 268`;
       steps=[
-        `All stations healthy. Day ${268-day} sim days remaining.`,
+        `All stations healthy. ${268-day} sim days remaining.`,
         `Current contract: ${c===3?'Contract 3 ($1,250) — maximum revenue!':c===2?'Contract 2 ($1,000)':'Contract 1 ($750) — check if LT allows upgrade'}`,
-        'Begin planning machine sell-off once any station drops below 55% util',
-        day>=190?`Kit wind-down: reduce Order Qty — ${268-day} days left, unused kits = $0`:'Day 190+: start reducing kit Order Qty to avoid dead stock at Day 268'
+        day>=210?`Person 4: compute on-hand + in-transit kits. Need ~${Math.max(0,Math.round((268-day)*12))} more kits to Day 268. Set Q to cover shortfall, last order by Day 214.`:'Day ~210: Person 4 will compute final kit order using newsvendor (target 605 kits by Day 214)',
+        day>=215?'⚠️ APPROACHING LOCK: set Q=0 after confirming ≥605 kits on-hand + in-transit (Day ~217)':'Keep monitoring. Do NOT change contract or machines without strong reason this late.'
       ];
     }
   } else if(day>=190){
     state='warn'; role='PERSON 4 — INVENTORY MANAGER';
-    title=`📦 REDUCE KIT ORDER QUANTITY — ${268-day} sim days left`;
+    title=`📦 FINAL KIT PLANNING — ${268-day} sim days left`;
     steps=[
-      `Day ${day}: ${268-day} sim days remain. Each kit ordered costs $600, unused kits = $0 at Day 268`,
-      `Estimate kits needed: ~${Math.max(10,Math.round((268-day)*8*0.6))} total kits should suffice`,
-      'Person 4: reduce Order Quantity in Material panel. Change ONLY Quantity (not ROP) this session',
-      'Repeat each session until Order Qty is just enough to cover remaining days'
+      `Day ${day}: ${268-day} sim days remain at ~12 orders/day = ~${(268-day)*12} more orders expected`,
+      'Newsvendor target: 600 + 0.32×2.3×sqrt(50) ≈ 605 kits on-hand + in-transit by Day 214',
+      day>=210?`Person 4: check on-hand + in-transit NOW. Final order MUST be placed by Day 214 (4-day lead time).`:'Person 4: watch kit levels. Around Day 210 you will set Q to cover the exact remaining shortfall.',
+      day>=215?'⚠️ After final order lands: set Q=0 to prevent any more orders. Confirm ≥605 kits first.':'Keep Q=120 until Day ~210, then compute the final targeted order quantity.'
     ];
   } else {
     state='ok'; role='ALL GOOD — KEEP MONITORING';
+    const nextAction=day<85?'Next: Day ~85 buy S3 #2 ($100k), set ROP→43':day<110?'Next: Day ~105 buy S1 #3 ($90k), Day ~110 set ROP→55':day<130?'Next: confirm plateau. If LT < 0.3d for 10 days + util < 75% → evaluate C3':day<210?'Next: Day ~210 P4 computes final kit order (newsvendor target 605 kits)':'End-game: verify kit levels, prepare Day 217 parameter lock';
     title='✅ All Systems Normal';
     steps=[
       `Stations: St1 ${(u1*100).toFixed(0)}% · St2 ${(u2*100).toFixed(0)}% · St3 ${(u3*100).toFixed(0)}% — all within safe range`,
-      `Lead time: ${lt.toFixed(3)} days · Kit queue: ${qj} jobs — no immediate action needed`,
-      `Contract ${c} active${c<3&&lt>0&&lt<.5?' — LT is low, consider upgrading contract!':c<2&&lt>0&&lt<.8?' — LT allows Contract 2, consider upgrading':''}`,
-      'Person 5: continue pulling data every ~5 minutes and update the team'
+      `Lead time: ${lt.toFixed(3)}d · Kit queue: ${qj} jobs · Contract ${c} ($${c===3?'1,250':c===2?'1,000':'750'}/job) — no immediate action needed`,
+      nextAction,
+      'Person 5: pull fresh data every ~5 minutes. Person 1: confirm Command Box stays green.'
     ];
   }
 
